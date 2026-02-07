@@ -1,0 +1,55 @@
+/* Image alignment styles */
+.ql-editor img.ql-align-left {
+    display: block;
+    margin: 0 auto 0 0;
+    float: left;
+    clear: left;
+    margin-right: 1em;
+}
+
+.ql-editor img.ql-align-center {
+    display: block;
+    margin: 0 auto;
+}
+
+.ql-editor img.ql-align-right {
+    display: block;
+    margin: 0 0 0 auto;
+    float: right;
+    clear: right;
+    margin-left: 1em;
+}
+
+/* Resizable image styling */
+.resizable-image {
+    border-radius: 4px;
+}
+
+.ql-snow .ql-stroke {
+    stroke: #444;
+}
+
+.ql-snow .ql-fill,
+.ql-snow .ql-stroke.ql-fill {
+    fill: #444;
+}
+
+/* Image resize toolbar styling */
+.ql-image-resize-container {
+    position: absolute;
+    display: flex;
+    gap: 8px;
+    background: white;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+.ql-image-resize-handle {
+    width: 6px;
+    height: 6px;
+    background: #1890ff;
+    border-radius: 50%;
+    cursor: nwse-resize;
+}

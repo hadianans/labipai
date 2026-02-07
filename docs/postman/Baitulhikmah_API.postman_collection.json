@@ -1,0 +1,1546 @@
+{
+    "info": {
+        "name": "Baitulhikmah API",
+        "description": "API Collection untuk Website Laboratorium Ilmu Pendidikan Agama Islam \"Baitulhikmah\" - Universitas Pendidikan Indonesia\n\n## Authentication\nAPI menggunakan Laravel Sanctum dengan Bearer Token.\nSetelah login/register, gunakan token di header:\n`Authorization: Bearer {{token}}`\n\n## User Roles\n- 0: Super Admin\n- 1: Admin\n- 2: User (default)",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "{{base_url}}/api"
+        }
+    ],
+    "item": [
+        {
+            "name": "Auth",
+            "description": "Authentication endpoints untuk register, login, dan manajemen user",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"phone\": \"08123456789\"\n}"
+                        },
+                        "url": "{{baseUrl}}/auth/register"
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "status": "Created",
+                            "code": 201,
+                            "body": "{\n  \"success\": true,\n  \"message\": \"Registrasi berhasil\",\n  \"data\": {\n    \"user\": {\n      \"id\": 1,\n      \"username\": \"johndoe\",\n      \"email\": \"john@example.com\",\n      \"role\": \"2\",\n      \"phone\": \"08123456789\"\n    },\n    \"token\": \"1|abc123...\"\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": "{{baseUrl}}/auth/login"
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"message\": \"Login berhasil\",\n  \"data\": {\n    \"user\": {...},\n    \"token\": \"2|xyz789...\"\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/auth/logout"
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"message\": \"Logout berhasil\"\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/auth/me"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Profile",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"johndoe_updated\",\n  \"phone\": \"08987654321\"\n}"
+                        },
+                        "url": "{{baseUrl}}/auth/profile"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Change Password",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"current_password\": \"password123\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+                        },
+                        "url": "{{baseUrl}}/auth/password"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Books",
+            "description": "Endpoints untuk manajemen buku dan peminjaman",
+            "item": [
+                {
+                    "name": "List Books",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/books?search=&genre_id=&status=&type=&available=false&per_page=15",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "books"
+                            ],
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": "",
+                                    "description": "Search by title, author, publisher, ISBN"
+                                },
+                                {
+                                    "key": "genre_id",
+                                    "value": "",
+                                    "description": "Filter by genre ID"
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "",
+                                    "description": "0: available, 1: borrowed, 2: lost"
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "",
+                                    "description": "0: restricted, 1: open access"
+                                },
+                                {
+                                    "key": "available",
+                                    "value": "false",
+                                    "description": "true to show only available"
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"current_page\": 1,\n    \"data\": [\n      {\n        \"id\": 1,\n        \"title\": \"Fiqh Islam\",\n        \"author\": \"Dr. Ahmad\",\n        \"publisher\": \"Pustaka Islam\",\n        \"year\": 2023,\n        \"type\": \"1\",\n        \"status\": \"0\",\n        \"genres\": [{\"id\": 1, \"name\": \"Fiqh\"}],\n        \"copies\": [{\"id\": 1, \"copy\": 5}]\n      }\n    ],\n    \"per_page\": 15,\n    \"total\": 100\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Book Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/books/1"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Book (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Fiqh Islam Kontemporer\",\n  \"author\": \"Dr. Ahmad\",\n  \"publisher\": \"Pustaka Islam\",\n  \"year\": 2024,\n  \"language\": \"Indonesia\",\n  \"page\": 350,\n  \"synopsis\": \"Buku tentang fiqh islam modern\",\n  \"isbn\": \"978-123-456-789-0\",\n  \"type\": \"1\",\n  \"genre_ids\": [1, 2],\n  \"copies\": 5\n}"
+                        },
+                        "url": "{{baseUrl}}/books"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Book (Admin)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Fiqh Islam Kontemporer - Edisi Revisi\",\n  \"status\": \"0\"\n}"
+                        },
+                        "url": "{{baseUrl}}/books/1"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Book (Admin)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/books/1"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Borrow Book",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/books/1/borrow"
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "status": "Created",
+                            "code": 201,
+                            "body": "{\n  \"success\": true,\n  \"message\": \"Buku berhasil dipinjam\",\n  \"data\": {\n    \"lend\": {\n      \"id\": 1,\n      \"book_id\": 1,\n      \"user_id\": 1,\n      \"due_date\": \"2026-01-18\"\n    },\n    \"due_date\": \"2026-01-18\"\n  }\n}"
+                        },
+                        {
+                            "name": "Error - Book Restricted",
+                            "status": "Bad Request",
+                            "code": 400,
+                            "body": "{\n  \"success\": false,\n  \"message\": \"Buku ini tidak dapat dipinjam (Restricted)\"\n}"
+                        },
+                        {
+                            "name": "Error - Max Loans",
+                            "status": "Bad Request",
+                            "code": 400,
+                            "body": "{\n  \"success\": false,\n  \"message\": \"Anda sudah meminjam 3 buku. Kembalikan buku terlebih dahulu.\"\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Return Book",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/books/1/return"
+                    },
+                    "response": [
+                        {
+                            "name": "Success with Fine",
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"message\": \"Buku berhasil dikembalikan\",\n  \"data\": {\n    \"lend\": {...},\n    \"fine\": {\n      \"amount\": 2500,\n      \"is_paid\": false\n    }\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Extend Loan",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/books/1/extend"
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"message\": \"Peminjaman berhasil diperpanjang\",\n  \"data\": {\n    \"lend\": {...},\n    \"new_due_date\": \"2026-01-25\",\n    \"extensions_remaining\": 1\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Toggle Favorite",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/books/1/favorite"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Add Review",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"star\": 5,\n  \"review\": \"Buku yang sangat bermanfaat!\"\n}"
+                        },
+                        "url": "{{baseUrl}}/books/1/review"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "My Loans",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/books/my-loans"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "My Favorites",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/books/my-favorites"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Genres",
+            "description": "Endpoints untuk manajemen genre buku",
+            "item": [
+                {
+                    "name": "List Genres",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/genres"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Genre (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Fiqh\"\n}"
+                        },
+                        "url": "{{baseUrl}}/genres"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Genre (Admin)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Fiqh Islam\"\n}"
+                        },
+                        "url": "{{baseUrl}}/genres/1"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Genre (Admin)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/genres/1"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Courses",
+            "description": "Endpoints untuk manajemen kursus dan enrollment",
+            "item": [
+                {
+                    "name": "List Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/courses?search=&per_page=15",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "courses"
+                            ],
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Course Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/courses/1"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Course (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Dasar-dasar Ilmu Tajwid\",\n  \"description\": \"Kursus tajwid untuk pemula\",\n  \"status\": \"1\"\n}"
+                        },
+                        "url": "{{baseUrl}}/courses"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Enroll Course",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/courses/1/enroll"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Complete Content",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"course_id\": 1\n}"
+                        },
+                        "url": "{{baseUrl}}/courses/content/1/complete"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Add Course Review",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"star\": 5,\n  \"review\": \"Kursus yang sangat membantu!\"\n}"
+                        },
+                        "url": "{{baseUrl}}/courses/1/review"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "My Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/courses/my-courses"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Articles",
+            "description": "Endpoints untuk manajemen artikel/blog",
+            "item": [
+                {
+                    "name": "List Articles",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/articles?search=&category_id=&per_page=15",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "articles"
+                            ],
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "category_id",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Article by Slug",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/articles/artikel-slug"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Article (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Pentingnya Membaca Al-Quran\",\n  \"slug\": \"pentingnya-membaca-al-quran\",\n  \"excerpt\": \"Ringkasan artikel\",\n  \"content\": \"<p>Konten artikel lengkap...</p>\",\n  \"status\": \"1\",\n  \"category_ids\": [1, 2]\n}"
+                        },
+                        "url": "{{baseUrl}}/articles"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Article (Admin)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Updated Title\",\n  \"status\": \"0\"\n}"
+                        },
+                        "url": "{{baseUrl}}/articles/1"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Article (Admin)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/articles/1"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Galleries",
+            "description": "Endpoints untuk manajemen galeri gambar",
+            "item": [
+                {
+                    "name": "List Galleries",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/galleries?search=&tag_id=&hero=false",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "galleries"
+                            ],
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "tag_id",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "hero",
+                                    "value": "false"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Hero Images",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/galleries/hero"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Gallery (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Kegiatan PPBQ 2024\",\n  \"description\": \"Dokumentasi kegiatan PPBQ\",\n  \"alt_text\": \"Foto kegiatan PPBQ\",\n  \"img_url\": \"/storage/gallery/ppbq-2024.jpg\",\n  \"is_hero\": false,\n  \"tag_ids\": [1, 2]\n}"
+                        },
+                        "url": "{{baseUrl}}/galleries"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Announcements",
+            "description": "Endpoints untuk manajemen pengumuman",
+            "item": [
+                {
+                    "name": "List Announcements",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/announcements?popup=false&section=false",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "announcements"
+                            ],
+                            "query": [
+                                {
+                                    "key": "popup",
+                                    "value": "false"
+                                },
+                                {
+                                    "key": "section",
+                                    "value": "false"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Announcement (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Pendaftaran PPBQ Batch 2\",\n  \"content\": \"Pendaftaran dibuka mulai...\",\n  \"img_url\": \"/storage/announcements/ppbq.jpg\",\n  \"action_url\": \"https://forms.google.com/...\",\n  \"priority\": \"2\",\n  \"type\": \"0\",\n  \"status\": \"1\",\n  \"start_date\": \"2026-01-15\",\n  \"end_date\": \"2026-02-15\"\n}"
+                        },
+                        "url": "{{baseUrl}}/announcements"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Categories & Tags",
+            "description": "Endpoints untuk manajemen kategori artikel dan tag galeri",
+            "item": [
+                {
+                    "name": "List Categories",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/categories"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Category (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Kajian Ilmiah\"\n}"
+                        },
+                        "url": "{{baseUrl}}/categories"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "List Tags",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/tags"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Tag (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Kegiatan\"\n}"
+                        },
+                        "url": "{{baseUrl}}/tags"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Organization",
+            "description": "Endpoints untuk informasi organisasi",
+            "item": [
+                {
+                    "name": "Get Vision & Mission",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/organization/vision?year=2026",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "organization",
+                                "vision"
+                            ],
+                            "query": [
+                                {
+                                    "key": "year",
+                                    "value": "2026"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Organization Structure",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/organization/structure?year=2026",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "organization",
+                                "structure"
+                            ],
+                            "query": [
+                                {
+                                    "key": "year",
+                                    "value": "2026"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Departments",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/organization/departments"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Programs",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/organization/programs"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Save Vision & Mission (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"vision_point\": \"Menjadi laboratorium terdepan dalam pengembangan ilmu PAI\",\n  \"year\": 2026,\n  \"missions\": [\n    \"Mengembangkan kurikulum PAI yang inovatif\",\n    \"Meningkatkan kompetensi mahasiswa PAI\",\n    \"Menjalin kerjasama dengan lembaga pendidikan\"\n  ]\n}"
+                        },
+                        "url": "{{baseUrl}}/organization/vision"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Administrator (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Ahmad Fauzi\",\n  \"position\": \"Ketua\",\n  \"division\": \"Laboratorium\",\n  \"is_chief\": true,\n  \"year\": 2026,\n  \"img_url\": \"/storage/administrators/ahmad.jpg\"\n}"
+                        },
+                        "url": "{{baseUrl}}/organization/administrators"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Department (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Media & IT\",\n  \"description\": \"Departemen yang menangani media dan teknologi informasi\"\n}"
+                        },
+                        "url": "{{baseUrl}}/organization/departments"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Program (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"PPBQ\",\n  \"description\": \"Program Pemantapan Baca Quran\",\n  \"detail_url\": \"https://baitulhikmah.com/ppbq\",\n  \"img_url\": \"/storage/programs/ppbq.jpg\"\n}"
+                        },
+                        "url": "{{baseUrl}}/organization/programs"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Utility",
+            "description": "Endpoints untuk fitur utilitas (calendar, rooms, contacts, feedback)",
+            "item": [
+                {
+                    "name": "Get Calendar Events",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/calendar?month=1&year=2026&upcoming=false",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "calendar"
+                            ],
+                            "query": [
+                                {
+                                    "key": "month",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "year",
+                                    "value": "2026"
+                                },
+                                {
+                                    "key": "upcoming",
+                                    "value": "false"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Calendar Event (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Kajian Rutin Bulanan\",\n  \"description\": \"Kajian bulanan bulan Januari\",\n  \"start_time\": \"2026-01-20 09:00:00\",\n  \"end_time\": \"2026-01-20 12:00:00\"\n}"
+                        },
+                        "url": "{{baseUrl}}/calendar"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Room Bookings",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/rooms?date=&upcoming=true",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "rooms"
+                            ],
+                            "query": [
+                                {
+                                    "key": "date",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "upcoming",
+                                    "value": "true"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Book Room",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Rapat Koordinasi\",\n  \"description\": \"Rapat koordinasi mingguan\",\n  \"start_time\": \"2026-01-15 10:00:00\",\n  \"end_time\": \"2026-01-15 12:00:00\"\n}"
+                        },
+                        "url": "{{baseUrl}}/rooms"
+                    },
+                    "response": [
+                        {
+                            "name": "Error - Time Conflict",
+                            "status": "Bad Request",
+                            "code": 400,
+                            "body": "{\n  \"success\": false,\n  \"message\": \"Ruangan sudah dibooking pada waktu tersebut\"\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Cancel Room Booking",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/rooms/1"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Contacts",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/contacts"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Contact (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"type\": \"whatsapp\",\n  \"detail\": \"+6281234567890\"\n}"
+                        },
+                        "url": "{{baseUrl}}/contacts"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Submit Feedback",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"subject\": \"Saran untuk Website\",\n  \"message\": \"Saya ingin memberikan saran...\",\n  \"is_anonymous\": true\n}"
+                        },
+                        "url": "{{baseUrl}}/feedback"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Feedback (Admin)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/feedback?anonymous=false",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "feedback"
+                            ],
+                            "query": [
+                                {
+                                    "key": "anonymous",
+                                    "value": "false"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}
