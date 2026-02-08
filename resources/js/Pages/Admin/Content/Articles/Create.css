@@ -1,55 +1,195 @@
-/* Image alignment styles */
-.ql-editor img.ql-align-left {
-    display: block;
-    margin: 0 auto 0 0;
-    float: left;
-    clear: left;
-    margin-right: 1em;
+/* Image base styles */
+.ql-editor img {
+    max-width: 100%;
+    height: auto;
 }
 
-.ql-editor img.ql-align-center {
+/* ============================================
+   Quill Resize Module Alignment Styles
+   Classes: ql-resize-style-left, ql-resize-style-center, ql-resize-style-right, ql-resize-style-full
+   Applied to: <span> wrapper around <img>
+   ============================================ */
+
+/* Left aligned images */
+.ql-editor span.ql-resize-style-left {
     display: block;
+    float: left;
+    margin: 0 1em 1em 0;
+    clear: left;
+}
+
+/* Center aligned images */
+.ql-editor span.ql-resize-style-center {
+    display: block;
+    text-align: center;
+    margin: 1em auto;
+    float: none;
+    clear: both;
+}
+
+.ql-editor span.ql-resize-style-center img {
+    display: inline-block;
     margin: 0 auto;
 }
 
-.ql-editor img.ql-align-right {
+/* Right aligned images */
+.ql-editor span.ql-resize-style-right {
     display: block;
-    margin: 0 0 0 auto;
     float: right;
+    margin: 0 0 1em 1em;
     clear: right;
+}
+
+/* Full width images */
+.ql-editor span.ql-resize-style-full {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 1em 0;
+    float: none;
+    clear: both;
+}
+
+.ql-editor span.ql-resize-style-full img {
+    width: 100%;
+    height: auto;
+}
+
+/* Clear floats after aligned images */
+.ql-editor p:after,
+.ql-editor div:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* ============================================
+   Fallback: Inline style selectors
+   ============================================ */
+
+/* Centered images - handle inline styles */
+.ql-editor img[style*="margin-left: auto"],
+.ql-editor img[style*="margin: 0 auto"] {
+    display: block;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Left aligned images */
+.ql-editor img[style*="float: left"] {
+    float: left;
+    margin-right: 1em;
+    margin-bottom: 1em;
+}
+
+/* Right aligned images */
+.ql-editor img[style*="float: right"] {
+    float: right;
     margin-left: 1em;
+    margin-bottom: 1em;
 }
 
-/* Resizable image styling */
-.resizable-image {
-    border-radius: 4px;
-}
 
-.ql-snow .ql-stroke {
-    stroke: #444;
-}
-
-.ql-snow .ql-fill,
-.ql-snow .ql-stroke.ql-fill {
-    fill: #444;
-}
-
-/* Image resize toolbar styling */
-.ql-image-resize-container {
+/* Blot Formatter Overlay custom styling */
+.blot-formatter__overlay {
+    border: 1px dashed #444;
+    box-sizing: border-box;
+    cursor: move;
     position: absolute;
-    display: flex;
-    gap: 8px;
-    background: white;
-    padding: 8px;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
+    /* Required since we removed default style */
 }
 
-.ql-image-resize-handle {
-    width: 6px;
-    height: 6px;
-    background: #1890ff;
-    border-radius: 50%;
-    cursor: nwse-resize;
+/* Resize Handles */
+.blot-formatter__resize-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #fff;
+    border: 1px solid #777;
+    box-sizing: border-box;
+    opacity: 0.8;
+}
+
+.blot-formatter__resize-handle:hover {
+    background-color: #f0f0f0;
+    opacity: 1;
+}
+
+/* Handle Positions */
+.blot-formatter__resize-handle-top-left {
+    top: -6px;
+    left: -6px;
+    cursor: nw-resize;
+}
+
+.blot-formatter__resize-handle-top-right {
+    top: -6px;
+    right: -6px;
+    cursor: ne-resize;
+}
+
+.blot-formatter__resize-handle-bottom-right {
+    bottom: -6px;
+    right: -6px;
+    cursor: se-resize;
+}
+
+.blot-formatter__resize-handle-bottom-left {
+    bottom: -6px;
+    left: -6px;
+    cursor: sw-resize;
+}
+
+/* Alignment Toolbar */
+.blot-formatter__toolbar {
+    position: absolute;
+    top: -45px;
+    /* Position above the image */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    display: flex;
+    gap: 4px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+}
+
+/* Toolbar Buttons */
+.blot-formatter__toolbar-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    color: #444;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.blot-formatter__toolbar-button:hover {
+    background: #f5f5f5;
+    border-color: #bbb;
+}
+
+.blot-formatter__toolbar-button.is-selected {
+    background: #e6f7ff;
+    border-color: #1890ff;
+    color: #1890ff;
+}
+
+.blot-formatter__toolbar-button svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }

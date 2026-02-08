@@ -46,7 +46,7 @@ export default function Index({ auth, books, filters }) {
         >
             <Head title="Books" />
 
-            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg xl:mx-8">
                 <div className="p-6 text-gray-900">
 
                     <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
@@ -71,29 +71,29 @@ export default function Index({ auth, books, filters }) {
                         </Link>
                     </div>
 
-                    <div className="overflow-x-auto ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                    <div className="overflow-x-auto rounded-md">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Cover
+                                    <th scope="col" className="px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider max-w-[150px] sm:max-w-sm">
+                                        Cover``
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Title / Author
                                     </th>
-                                    <th scope="col" className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="hidden lg:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Genres
                                     </th>
-                                    <th scope="col" className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="hidden md:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Status
                                     </th>
-                                    <th scope="col" className="hidden xl:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="hidden xl:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Type
                                     </th>
-                                    <th scope="col" className="hidden xl:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="hidden xl:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Year
                                     </th>
-                                    <th scope="col" className="hidden sm:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="hidden sm:table-cell px-4 py-2 text-right text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
@@ -103,17 +103,17 @@ export default function Index({ auth, books, filters }) {
                                     books.data.map((book) => (
                                         <React.Fragment key={book.id}>
                                             <tr className={expandedRows.includes(book.id) ? 'bg-gray-50' : ''}>
-                                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                <td className="p-2 sm:px-4 sm:py-2 whitespace-nowrap max-w-[150px] sm:max-w-sm">
                                                     <div className="flex items-center gap-3">
                                                         {/* Expand Button (Visible on small screens) */}
                                                         <button
                                                             onClick={() => toggleRow(book.id)}
-                                                            className="xl:hidden flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                            className="xl:hidden flex-shrink-0 inline-flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                                         >
                                                             {expandedRows.includes(book.id) ? (
-                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" /></svg>
+                                                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" /></svg>
                                                             ) : (
-                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                                                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                                                             )}
                                                         </button>
 
@@ -121,30 +121,30 @@ export default function Index({ auth, books, filters }) {
                                                             <img
                                                                 src={book.img_url}
                                                                 alt={book.title}
-                                                                className="h-16 w-12 object-cover rounded shadow"
+                                                                className="h-20 w-15 md:h-32 md:w-24 lg:h-42 lg:w-32 object-cover rounded shadow"
                                                             />
                                                         ) : (
-                                                            <div className="h-16 w-12 object-cover rounded shadow flex items-center justify-center bg-gray-100 text-gray-400 flex-col">
+                                                            <div className="h-20 w-15 md:h-32 md:w-24 lg:h-42 lg:w-32 object-cover rounded shadow flex items-center justify-center bg-gray-100 text-gray-400 flex-col">
                                                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                                             </div>
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="text-sm font-medium text-gray-900">{book.title}</div>
-                                                    <div className="text-sm text-gray-500">{book.author}</div>
+                                                <td className="p-2 sm:px-4 sm:py-2">
+                                                    <div className="text-xs sm:text-sm md:text-base font-medium text-gray-900 truncate max-w-[clamp(100px,42vw,360px)] sm:max-w-[clamp(150px,30vw,360px)]" title={book.title}>{book.title}</div>
+                                                    <div className="text-xs sm:text-sm md:text-base text-gray-500 truncate max-w-[clamp(100px,42vw,360px)] sm:max-w-[clamp(150px,30vw,360px)]">{book.author}</div>
                                                     <div className="text-xs text-gray-400">{book.id}</div>
                                                 </td>
-                                                <td className="hidden lg:table-cell px-6 py-4">
+                                                <td className="hidden lg:table-cell px-4 py-2">
                                                     <div className="flex flex-wrap gap-1">
                                                         {book.genres.map(genre => (
-                                                            <span key={genre.id} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                                            <span key={genre.id} className="inline-flex items-center px-2 py-0.5 rounded text-xs lg:text-sm font-medium bg-gray-100 text-gray-800">
                                                                 {genre.name}
                                                             </span>
                                                         ))}
                                                     </div>
                                                 </td>
-                                                <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
+                                                <td className="hidden md:table-cell px-4 py-2 whitespace-nowrap">
                                                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                                         ${book.status === '0' ? 'bg-green-100 text-green-800' :
                                                             book.status === '1' ? 'bg-yellow-100 text-yellow-800' :
@@ -152,16 +152,16 @@ export default function Index({ auth, books, filters }) {
                                                         {book.status === '0' ? 'Available' : book.status === '1' ? 'Borrowed' : 'Lost'}
                                                     </span>
                                                 </td>
-                                                <td className="hidden xl:table-cell px-6 py-4 whitespace-nowrap">
+                                                <td className="hidden xl:table-cell px-4 py-2 whitespace-nowrap">
                                                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                                         ${book.type === '1' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800'}`}>
                                                         {book.type === '1' ? 'Open Access' : 'Restricted'}
                                                     </span>
                                                 </td>
-                                                <td className="hidden xl:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <td className="hidden xl:table-cell px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                                                     {book.year}
                                                 </td>
-                                                <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <td className="hidden sm:table-cell px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
                                                     <Link href={route('admin.books.edit', book.id)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</Link>
                                                     <button onClick={() => handleDelete(book.id)} className="text-red-600 hover:text-red-900">Delete</button>
                                                 </td>

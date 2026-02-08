@@ -24,7 +24,7 @@ export default function About({ vision, administrators, programs }) {
                 <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] animate-pulse"></div>
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-primary-900/90"></div>
                 <div className="relative z-10 max-w-4xl mx-auto px-4">
-                    <span className="inline-block py-1 px-3 rounded-full bg-secondary-500/20 text-secondary-300 text-sm font-semibold tracking-wider mb-4 border border-secondary-500/30">EST. 2010</span>
+                    <span className="inline-block py-1 px-3 rounded-full bg-secondary-500/20 text-secondary-300 text-sm font-semibold tracking-wider mb-4 border border-secondary-500/30">EST. 2007</span>
                     <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400 drop-shadow-sm">Our Story & Vision</h1>
                     <p className="text-xl text-gray-300 font-light max-w-2xl mx-auto">Building a legacy of knowledge and virtue through modern Islamic education.</p>
                 </div>
@@ -39,7 +39,7 @@ export default function About({ vision, administrators, programs }) {
                             <div className="absolute -inset-4 bg-primary-100 rounded-3xl transform rotate-3 transition-transform group-hover:rotate-6"></div>
 
                             {/* Ideally fetch another gallery image or static placeholder */}
-                            <img src="/storage/gallery/about2.png" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block' }} className="relative rounded-2xl shadow-xl w-full object-cover transform transition-transform group-hover:scale-[1.02]" alt="About" />
+                            <img src="/storage/gallery/about2.jpg" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block' }} className="relative rounded-2xl shadow-xl w-full object-cover transform transition-transform group-hover:scale-[1.02]" alt="About" />
                             <div className="hidden text-lg">Baitulhikmah</div>
                             {/* <img
                                 src="https://placehold.co/600x400?text=Our+Story"
@@ -57,7 +57,7 @@ export default function About({ vision, administrators, programs }) {
                                     Baitulhikmah di bawah naungan program studi Ilmu Pendidikan Agama Islam UPI, didirikan dengan satu tujuan tunggal: untuk menjembatani kesenjangan antara warisan Islam klasik dan kebutuhan pendidikan modern. Berawal dari kelompok baca kecil, kami telah berkembang menjadi pusat pembelajaran, penelitian, dan pengembangan komunitas yang komprehensif.
                                 </p>
                                 <p>
-                                    Selama bertahun-tahun, kami telah mengumpulkan para cendekiawan, mahasiswa, dan profesional yang berdedikasi untuk mengejar kebijaksanaan. Perjalanan kami adalah perjalanan pertumbuhan yang berkelanjutan, didorong oleh semangat untuk melestarikan pengetahuan dan menginspirasi generasi mendatang.
+                                    Selama bertahun-tahun, kami telah mengumpulkan para cendekiawan, mahasiswa, dan profesional yang berdedikasi terhadap ilmu. Perjalanan kami adalah pertumbuhan yang berkelanjutan, didorong oleh semangat jihad di jalan-Nya dan menginspirasi generasi mendatang.
                                 </p>
                             </div>
                         </div>
@@ -167,12 +167,12 @@ export default function About({ vision, administrators, programs }) {
 
                     {/* Programs Section */}
                     {programs && programs.length > 0 && (
-                        <div className="mb-24">
+                        <div className="w-full mx-auto px-4 sm:px-6 mb-8" id="programs">
                             <div className="text-center mb-16">
                                 <h2 className="text-4xl font-serif font-bold text-gray-900 mb-4">Our Programs</h2>
                                 <div className="w-24 h-1 bg-secondary-500 mx-auto rounded-full"></div>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                                 {programs.map(program => (
                                     <div key={program.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 flex flex-col h-full border border-gray-100">
                                         <div className="h-48 bg-gray-200 w-full relative overflow-hidden group">

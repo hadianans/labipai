@@ -28,6 +28,7 @@ class User extends Authenticatable
      * The attributes that are mass assignable.
      */
     protected $fillable = [
+        'id',
         'username',
         'email',
         'password',
@@ -115,5 +116,10 @@ class User extends Authenticatable
     public function borrowRequests(): HasMany
     {
         return $this->hasMany(BorrowRequest::class);
+    }
+
+    public function unapproveRegister(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(UnapproveRegister::class, 'id', 'id');
     }
 }

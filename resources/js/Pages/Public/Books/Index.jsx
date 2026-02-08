@@ -2,18 +2,26 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
 
-export default function BookIndex({ books }) {
+export default function BookIndex({ books, genres }) {
     const [search, setSearch] = useState('');
     const [selectedGenre, setSelectedGenre] = useState('All');
     const [selectedBook, setSelectedBook] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
 
-    const genres = ['Fiction', 'Islamic', 'Science', 'History', 'Philosophy', 'Technology', 'Arts', 'Biography'];
+    // const genres = ['Fiction', 'Islamic', 'Science', 'History', 'Philosophy', 'Technology', 'Arts', 'Biography'];
 
     const filteredBooks = books.filter((book) => {
         const matchesSearch = book.title.toLowerCase().includes(search.toLowerCase()) ||
             book.author.toLowerCase().includes(search.toLowerCase());
-        const matchesGenre = selectedGenre === 'All' || true; // Mock genre logic
+
+        let matchesGenre = true;
+        if (selectedGenre !== 'All') {
+            // Check if book has genres relation loaded (it should be an array of objects)
+            // Using 'some' to check if any of the book's genres match the selected genre
+            matchesGenre = book.genres && book.genres.some(g => g.name === selectedGenre);
+            // Fallback if genres is not loaded or different structure (e.g. if we fetched 'genres' string, but here we expect relation)
+            // Based on Controller, we did `with('genres')`, so book.genres is array of Genre models.
+        }
 
         return matchesSearch && matchesGenre;
     });

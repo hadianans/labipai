@@ -213,7 +213,7 @@ export default function Index({ auth, galleryItems, tags, filters = {} }) {
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                             {galleryItems.map((item) => (
-                                <div key={item.id} className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                <div key={item.id} className="rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                                     <div className="aspect-w-16 aspect-h-9 bg-gray-200 relative h-48">
                                         {item.img_url ? (
                                             <img src={`/storage/${item.img_url}`} alt={item.alt_text || item.title} className="object-cover w-full h-full" />
@@ -411,19 +411,19 @@ export default function Index({ auth, galleryItems, tags, filters = {} }) {
                     </form>
 
                     {/* Tag List */}
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto rounded-md">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th scope="col" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th scope="col" className="px-3 py-2 sm:px-4 sm:py-3 text-right text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {tags.map((tag) => (
                                     <tr key={tag.id}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{tag.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <td className="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">{tag.name}</td>
+                                        <td className="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
                                             <button
                                                 onClick={() => openTagModal(tag)}
                                                 className="text-indigo-600 hover:text-indigo-900 mr-4"

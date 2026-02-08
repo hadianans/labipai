@@ -125,7 +125,7 @@ export default function Index({ auth, lends, filters = {} }) {
         >
             <Head title="Loans" />
 
-            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 xl:mx-8">
 
                 {/* Header Actions */}
                 <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
@@ -167,49 +167,49 @@ export default function Index({ auth, lends, filters = {} }) {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                <div className="overflow-x-auto rounded-md">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Book</th>
-                                <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Borrower</th>
-                                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
-                                <th className="hidden xl:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                {activeTab === 'active' && <th className="hidden sm:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
+                                <th scope="col" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Book</th>
+                                <th scope="col" className="hidden lg:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Borrower</th>
+                                <th scope="col" className="hidden md:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                                <th scope="col" className="hidden xl:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                {activeTab === 'active' && <th scope="col" className="hidden sm:table-cell px-4 py-2 text-right text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {lends.data.map((lend) => (
                                 <React.Fragment key={lend.id}>
                                     <tr className={expandedRows.includes(lend.id) ? 'bg-gray-50' : ''}>
-                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                                            <div className="flex items-center gap-3">
+                                        <td className="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900 font-medium">
+                                            <div className="flex items-center gap-2 sm:gap-3">
                                                 {/* Expand Button */}
                                                 <button
                                                     onClick={() => toggleRow(lend.id)}
                                                     className="xl:hidden flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                                 >
                                                     {expandedRows.includes(lend.id) ? (
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" /></svg>
+                                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" /></svg>
                                                     ) : (
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                                                     )}
                                                 </button>
                                                 <div>
-                                                    <div className="text-sm font-medium text-gray-900">{lend.book?.title || 'Unknown Book'}</div>
-                                                    <div className="text-sm text-gray-500 lg:hidden">{lend.user?.username || lend.user?.name || 'Unknown User'}</div>
+                                                    <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-xs" title={lend.book?.title}>{lend.book?.title || 'Unknown Book'}</div>
+                                                    <div className="text-[10px] sm:text-xs text-gray-500 lg:hidden truncate max-w-[120px]">{lend.user?.username || lend.user?.name || 'Unknown User'}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="hidden lg:table-cell px-4 py-2 whitespace-nowrap text-xs sm:text-sm text-gray-500 truncate max-w-xs">
                                             {lend.user?.username || lend.user?.name || 'Unknown User'}
                                         </td>
-                                        <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="hidden md:table-cell px-4 py-2 whitespace-nowrap text-xs sm:text-sm text-gray-500">
                                             <span className={new Date(lend.due_date) < new Date() && !lend.returned_at ? 'text-red-600 font-bold' : ''}>
                                                 {new Date(lend.due_date).toLocaleDateString()}
                                             </span>
                                         </td>
-                                        <td className="hidden xl:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="hidden xl:table-cell px-4 py-2 whitespace-nowrap text-xs sm:text-sm text-gray-500">
                                             {lend.returned_at ? (
                                                 <span className="text-green-600 font-medium">Returned on {new Date(lend.returned_at).toLocaleDateString()}</span>
                                             ) : (
@@ -217,22 +217,22 @@ export default function Index({ auth, lends, filters = {} }) {
                                             )}
                                         </td>
                                         {activeTab === 'active' && (
-                                            <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div className="flex items-center gap-3 justify-end">
+                                            <td className="hidden sm:table-cell px-4 py-2 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
+                                                <div className="flex items-center gap-2 justify-end">
                                                     {/* Tombol Extend */}
                                                     <button
                                                         onClick={() => handleExtend(lend.id, lend.extension_count)}
                                                         disabled={lend.extension_count >= 2}
                                                         title={lend.extension_count >= 2 ? "Batas perpanjangan habis" : "Perpanjang Pinjaman"}
-                                                        className="group relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold tracking-wide uppercase rounded-lg transition-all duration-200 
+                                                        className="group relative flex items-center gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 text-[10px] sm:text-xs font-bold tracking-wide uppercase rounded-lg transition-all duration-200 
             disabled:opacity-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed
             bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white hover:shadow-md hover:shadow-indigo-100 active:scale-95"
                                                     >
-                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                         </svg>
                                                         <span>Extend</span>
-                                                        <span className="ml-0.5 px-1.5 py-0.5 bg-indigo-200 text-indigo-700 rounded-full text-[10px] group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                                                        <span className="ml-0.5 px-1 sm:px-1.5 py-0.5 bg-indigo-200 text-indigo-700 rounded-full text-[9px] sm:text-[10px] group-hover:bg-indigo-500 group-hover:text-white transition-colors">
                                                             {lend.extension_count}/2
                                                         </span>
                                                     </button>
@@ -240,10 +240,10 @@ export default function Index({ auth, lends, filters = {} }) {
                                                     {/* Tombol Return */}
                                                     <button
                                                         onClick={() => handleReturn(lend.id)}
-                                                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold tracking-wide uppercase rounded-lg transition-all duration-200
+                                                        className="flex items-center gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 text-[10px] sm:text-xs font-bold tracking-wide uppercase rounded-lg transition-all duration-200
             bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white hover:shadow-md hover:shadow-emerald-100 active:scale-95"
                                                     >
-                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                                         </svg>
                                                         <span>Return</span>
@@ -256,7 +256,7 @@ export default function Index({ auth, lends, filters = {} }) {
                                     {/* Child Row */}
                                     {expandedRows.includes(lend.id) && (
                                         <tr className="bg-gray-50 xl:hidden">
-                                            <td colSpan="5" className="px-4 py-4 sm:px-6">
+                                            <td colSpan="5" className="px-3 py-3 sm:px-6 sm:py-4">
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                                                     {/* Actions (Hidden on SM) */}

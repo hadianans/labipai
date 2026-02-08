@@ -112,7 +112,7 @@ export default function Index({ auth, programs }) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {programs.map((program) => (
-                            <div key={program.id} className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                            <div key={program.id} className="rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                                 <div className="h-48 bg-gray-200 w-full relative">
                                     {program.img_url ? (
                                         <img src={`/storage/${program.img_url}`} alt={program.name} className="w-full h-full object-cover" />

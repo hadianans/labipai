@@ -14,12 +14,48 @@ export default function Home({ slides, vision, stats, programs, randomBooks, con
         setActiveSlide(activeSlide === 0 ? slides.length - 1 : activeSlide - 1);
     };
 
+    // Touch support for swipe
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+
+    // Minimum swipe distance (in px)
+    const minSwipeDistance = 50;
+
+    const handleTouchStart = (e) => {
+        setTouchEnd(null); // Reset touch end
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchMove = (e) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe) {
+            nextSlide(); // Swipe Left -> Show Next
+        }
+        if (isRightSwipe) {
+            prevSlide(); // Swipe Right -> Show Prev
+        }
+    };
+
     return (
         <PublicLayout>
             <Head title="Home" />
 
             {/* Hero Section */}
-            <div className="relative bg-neutral-bg h-[600px] overflow-hidden group">
+            <div
+                className="relative bg-neutral-bg h-[600px] overflow-hidden group"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+            >
                 {slides.map((slide, index) => (
                     <div
                         key={index}
@@ -103,10 +139,10 @@ export default function Home({ slides, vision, stats, programs, randomBooks, con
                             </div>
                         </div>
                         <div className="order-1 md:order-2">
-                            <h2 className="text-primary-600 font-bold uppercase tracking-wide text-sm mb-2">Siapa kami</h2>
-                            <h3 className="text-4xl font-serif font-bold text-gray-900 mb-6">Mengembalikan kejayaan umat</h3>
+                            <h2 className="text-primary-600 font-bold uppercase tracking-wide text-sm mb-2">Apa yang kami?</h2>
+                            <h3 className="text-4xl font-serif font-bold text-gray-900 mb-6">Sebuah Harapan</h3>
                             <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                                Baitulhikmah lebih dari sekadar perpustakaan; ia adalah pusat pertumbuhan intelektual. Kami berupaya menciptakan lingkungan di mana pengetahuan berkembang.
+                                Baitulhikmah lebih dari sekadar perpustakaan; ia adalah pusat pertumbuhan intelektual. Kami berupaya menciptakan lingkungan yang mendukung perkembangan ilmu.
                             </p>
                             <Link href="/about" className="text-secondary-600 font-semibold hover:text-secondary-700 flex items-center group">
                                 Learn more about us
@@ -160,32 +196,33 @@ export default function Home({ slides, vision, stats, programs, randomBooks, con
             {/* New Books Section (Horizontal Scroll) */}
             <div className="py-16 bg-white border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-end mb-8">
-                        <div>
-                            <h2 className="text-secondary-600 font-bold uppercase tracking-wide text-sm mb-1">Discover Our Collcetions</h2>
-                            <h3 className="text-3xl font-serif font-bold text-gray-900">New Arrivals</h3>
-                        </div>
-                        <Link href="/books" className="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
-                            View All <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                        </Link>
-                    </div>
-
-                    <div className="flex overflow-x-auto pb-6 -mx-4 px-4 space-x-6 custom-scrollbar snap-x">
-                        {randomBooks.map((book) => (
-                            <Link href={`/books/${book.id}`} key={book.id} className="min-w-[160px] w-[160px] md:min-w-[180px] md:w-[180px] snap-center group">
-                                <div className="aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden shadow-sm group-hover:shadow-md transition mb-3 relative">
-                                    {book.img_url ? (
-                                        <img src={book.img_url} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400">
-                                            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                        </div>
-                                    )}
-                                </div>
-                                <h4 className="font-bold text-gray-900 truncate group-hover:text-primary-600 transition">{book.title}</h4>
-                                <p className="text-sm text-gray-500 truncate">{book.author}</p>
+                    {/* New Books Section - Horizontal Scroll */}
+                    <div>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-2xl font-bold text-gray-900 font-serif">New Arrivals</h2>
+                            <Link href={route('public.books.index')} className="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
+                                View All Books
+                                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                             </Link>
-                        ))}
+                        </div>
+
+                        <div className="flex overflow-x-auto gap-6 pb-6 custom-scrollbar snap-x snap-mandatory">
+                            {randomBooks.map((book) => (
+                                <Link key={book.id} href={`/books/${book.id}`} className="min-w-[160px] w-[160px] sm:min-w-[180px] sm:w-[180px] flex-shrink-0 group snap-start">
+                                    <div className="aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden shadow-sm group-hover:shadow-md transition mb-3 relative">
+                                        {book.img_url ? (
+                                            <img src={book.img_url} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400">
+                                                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <h4 className="font-bold text-gray-900 truncate group-hover:text-primary-600 transition">{book.title}</h4>
+                                    <p className="text-sm text-gray-500 truncate">{book.author}</p>
+                                </Link>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -193,13 +230,17 @@ export default function Home({ slides, vision, stats, programs, randomBooks, con
             {/* Program Section */}
             <div className="py-20 bg-neutral-bg">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h2 className="text-sm font-bold text-primary-600 uppercase tracking-widest mb-2">Our Programs</h2>
-                        <h3 className="text-3xl md:text-4xl font-serif font-bold text-gray-900">Pathways to Knowledge</h3>
+                    <div className="flex justify-between items-end mb-8">
+                        <div>
+                            <h2 className="text-sm font-bold text-primary-600 uppercase tracking-widest mb-2">Our Programs</h2>
+                            <h3 className="text-3xl md:text-4xl font-serif font-bold text-gray-900">Pathways to Knowledge</h3>
+                        </div>
+                        <Link href="/about#programs" className="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
+                            View All <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </Link>
                     </div>
-
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {programs.map((program) => (
+                        {programs.slice(0, 3).map((program) => (
                             <div key={program.id} className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full">
                                 <div className="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
                                     {/* Placeholder icons based on ID or random loop */}
@@ -275,6 +316,6 @@ export default function Home({ slides, vision, stats, programs, randomBooks, con
                 </div>
             </div>
 
-        </PublicLayout>
+        </PublicLayout >
     );
 }

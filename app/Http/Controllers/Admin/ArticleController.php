@@ -111,6 +111,47 @@ class ArticleController extends Controller
             $validated['img_url'] = $request->file('image')->store('articles/covers', 'public');
         }
 
+        // Handle content image cleanup
+        if ($article->content !== $request->input('content')) {
+            $domOld = new \DOMDocument();
+            @$domOld->loadHTML($article->content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            $imagesOld = $domOld->getElementsByTagName('img');
+            $oldSrcs = [];
+            foreach ($imagesOld as $img) {
+                if ($img instanceof \DOMElement) {
+                    $src = $img->getAttribute('src');
+                    if (strpos($src, '/storage/articles/content/') !== false) {
+                        $oldSrcs[] = $src;
+                    }
+                }
+            }
+
+            $domNew = new \DOMDocument();
+            @$domNew->loadHTML($request->input('content'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            $imagesNew = $domNew->getElementsByTagName('img');
+            $newSrcs = [];
+            foreach ($imagesNew as $img) {
+                if ($img instanceof \DOMElement) {
+                    $src = $img->getAttribute('src');
+                    if (strpos($src, '/storage/articles/content/') !== false) {
+                        $newSrcs[] = $src;
+                    }
+                }
+            }
+
+            $diff = array_diff($oldSrcs, $newSrcs);
+            foreach ($diff as $src) {
+                try {
+                    $path = str_replace('/storage/', '', parse_url($src, PHP_URL_PATH));
+                    if (Storage::disk('public')->exists($path)) {
+                        Storage::disk('public')->delete($path);
+                    }
+                } catch (\Exception $e) {
+                    // Ignore parsing errors
+                }
+            }
+        }
+
         $article->update($validated);
 
         if ($request->has('categories')) {
@@ -122,9 +163,40 @@ class ArticleController extends Controller
 
     public function destroy(Article $article)
     {
+        // Delete cover image
         if ($article->img_url) {
             Storage::disk('public')->delete($article->img_url);
         }
+
+        // Delete content images
+        $dom = new \DOMDocument();
+        // Suppress errors for invalid HTML
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($article->content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+
+        $images = $dom->getElementsByTagName('img');
+        foreach ($images as $img) {
+            if ($img instanceof \DOMElement) {
+                $src = $img->getAttribute('src');
+                // Check if image is stored locally in 'articles/content'
+                if (strpos($src, '/storage/articles/content/') !== false) {
+                    // Convert URL to storage path: /storage/path -> path
+                    try {
+                        $parsedPath = parse_url($src, PHP_URL_PATH);
+                        if ($parsedPath) {
+                            $path = str_replace('/storage/', '', $parsedPath);
+                            if (Storage::disk('public')->exists($path)) {
+                                Storage::disk('public')->delete($path);
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        // Ignore parsing errors
+                    }
+                }
+            }
+        }
+
         $article->delete();
         return redirect()->back()->with('success', 'Article deleted successfully.');
     }

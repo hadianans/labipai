@@ -116,7 +116,7 @@ class PublicController extends Controller
 
     public function books(Request $request)
     {
-        $query = \App\Models\Book::query();
+        $query = \App\Models\Book::with('genres');
 
         // Search
         if ($request->filled('search')) {
@@ -234,9 +234,11 @@ class PublicController extends Controller
                     'img_url' => $book->img_url ? '/storage/' . $book->img_url : null,
                     'rating' => 5.0,
                     'reviews_count' => 0,
-                    'copies' => $copies
+                    'copies' => $copies,
+                    'genres' => $book->genres, // Pass genres relation
                 ];
-            })
+            })->all(),
+            'genres' => \App\Models\Genre::pluck('name')
         ]);
     }
 

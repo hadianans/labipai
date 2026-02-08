@@ -8,9 +8,10 @@ export default function Dashboard({ auth, stats }) {
             user={auth.user}
             header="Admin Dashboard"
         >
+
             <Head title="Admin Dashboard" />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 xl:mx-12">
 
                 {/* Total Users */}
                 <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-indigo-500">
@@ -75,17 +76,17 @@ export default function Dashboard({ auth, stats }) {
 
             </div>
 
-            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 xl:mx-12">
                 <div className="p-6 text-gray-900">
                     <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Quick Actions</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {/* Placeholder buttons for quick actions */}
-                        <button className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-                            Add New Book
-                        </button>
-                        <button className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
-                            Add New Course
-                        </button>
+                        <a href={route('admin.books.create')} className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                            Add Book
+                        </a>
+                        <a href="#" className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+                            Add Course
+                        </a>
                     </div>
                 </div>
             </div>

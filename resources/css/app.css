@@ -112,3 +112,137 @@
         box-shadow: 0 0 0 3px rgb(34 197 94 / 0.2);
     }
 }
+
+@layer utilities {
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(156, 163, 175, 0.5);
+        border-radius: 20px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(107, 114, 128, 0.8);
+    }
+}
+
+/* Image alignment styles for display pages */
+
+/* Image alignment styles for display pages (override Tailwind Prose) */
+.prose img,
+.prose-lg img,
+.prose-xl img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Centered images - handle various inline style formats */
+.prose img[style*="margin-left: auto"],
+.prose img[style*="text-align: center"],
+.prose-lg img[style*="margin-left: auto"],
+.prose-lg img[style*="text-align: center"],
+.prose-xl img[style*="margin-left: auto"],
+.prose-xl img[style*="text-align: center"] {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    float: none !important;
+}
+
+/* Left aligned images */
+.prose img[style*="float: left"],
+.prose-lg img[style*="float: left"],
+.prose-xl img[style*="float: left"] {
+    float: left !important;
+    margin-right: 1em !important;
+    margin-bottom: 1em !important;
+    display: block !important;
+}
+
+/* Right aligned images */
+.prose img[style*="float: right"],
+.prose-lg img[style*="float: right"],
+.prose-xl img[style*="float: right"] {
+    float: right !important;
+    margin-left: 1em !important;
+    margin-bottom: 1em !important;
+    display: block !important;
+}
+
+/* ============================================
+   Quill Resize Module Alignment Styles (for public display)
+   Classes: ql-resize-style-left, ql-resize-style-center, ql-resize-style-right, ql-resize-style-full
+   Applied to: <span> wrapper around <img>
+   ============================================ */
+
+/* Left aligned images */
+.prose span.ql-resize-style-left,
+.prose-lg span.ql-resize-style-left,
+.prose-xl span.ql-resize-style-left {
+    display: block !important;
+    float: left !important;
+    margin: 0 1em 1em 0 !important;
+    clear: left;
+}
+
+/* Center aligned images */
+.prose span.ql-resize-style-center,
+.prose-lg span.ql-resize-style-center,
+.prose-xl span.ql-resize-style-center {
+    display: block !important;
+    text-align: center !important;
+    margin: 1em auto !important;
+    float: none !important;
+    clear: both;
+}
+
+.prose span.ql-resize-style-center img,
+.prose-lg span.ql-resize-style-center img,
+.prose-xl span.ql-resize-style-center img {
+    display: inline-block !important;
+    margin: 0 auto !important;
+}
+
+/* Right aligned images */
+.prose span.ql-resize-style-right,
+.prose-lg span.ql-resize-style-right,
+.prose-xl span.ql-resize-style-right {
+    display: block !important;
+    float: right !important;
+    margin: 0 0 1em 1em !important;
+    clear: right;
+}
+
+/* Full width images */
+.prose span.ql-resize-style-full,
+.prose-lg span.ql-resize-style-full,
+.prose-xl span.ql-resize-style-full {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin: 1em 0 !important;
+    float: none !important;
+    clear: both;
+}
+
+.prose span.ql-resize-style-full img,
+.prose-lg span.ql-resize-style-full img,
+.prose-xl span.ql-resize-style-full img {
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* Clear floats after aligned images */
+.prose p:after,
+.prose div:after {
+    content: "";
+    display: table;
+    clear: both;
+}

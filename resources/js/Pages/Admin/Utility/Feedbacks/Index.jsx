@@ -58,47 +58,49 @@ export default function Index({ auth, feedbacks }) {
                     <h3 className="text-lg font-medium text-gray-900">User Feedbacks</h3>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-md">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
-                                <th className="hidden sm:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th scope="col" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th scope="col" className="hidden sm:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" className="hidden md:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                                <th scope="col" className="hidden sm:table-cell px-4 py-2 text-right text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {feedbacks.map((feedback) => (
                                 <React.Fragment key={feedback.id}>
                                     <tr className={expandedRows.includes(feedback.id) ? 'bg-gray-50' : ''}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            <div className="flex items-center gap-3">
+                                        <td className="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
+                                            <div className="flex items-center gap-2 sm:gap-3">
                                                 <button
                                                     onClick={() => toggleRow(feedback.id)}
                                                     className="md:hidden flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                                 >
                                                     {expandedRows.includes(feedback.id) ? (
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" /></svg>
+                                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" /></svg>
                                                     ) : (
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                                                     )}
                                                 </button>
-                                                {feedback.is_anonymous ? 'Anonymous' : (feedback.user?.username || 'Unknown')}
+                                                <div className="truncate max-w-[clamp(120px,30vw,250px)] sm:max-w-md">
+                                                    {feedback.is_anonymous ? 'Anonymous' : (feedback.user?.username || 'Unknown')}
+                                                </div>
                                             </div>
                                         </td>
-                                        <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="hidden sm:table-cell px-4 py-2 whitespace-nowrap text-xs sm:text-sm text-gray-500">
                                             {new Date(feedback.created_at).toLocaleDateString()}
                                         </td>
-                                        <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{feedback.subject}</td>
-                                        <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <td className="hidden md:table-cell px-4 py-2 whitespace-nowrap text-xs sm:text-sm text-gray-500 truncate max-w-[clamp(150px,30vw,300px)]">{feedback.subject}</td>
+                                        <td className="hidden sm:table-cell px-4 py-2 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
                                             <button onClick={() => openModal(feedback)} className="text-indigo-600 hover:text-indigo-900 mr-4">View</button>
                                             <button onClick={() => handleDelete(feedback)} className="text-red-600 hover:text-red-900">Delete</button>
                                         </td>
                                     </tr>
                                     {expandedRows.includes(feedback.id) && (
                                         <tr className="bg-gray-50 md:hidden">
-                                            <td colSpan="4" className="px-6 py-4">
+                                            <td colSpan="4" className="px-3 py-3 sm:px-6 sm:py-4">
                                                 <div className="grid grid-cols-1 gap-4">
                                                     <div className="sm:hidden">
                                                         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Actions</span>
@@ -112,9 +114,9 @@ export default function Index({ auth, feedbacks }) {
                                                         <span className="text-sm text-gray-500">{new Date(feedback.created_at).toLocaleDateString()}</span>
                                                     </div>
                                                     {/* Subject is hidden on MD, so visible on XS/SM. No responsive class needed for div, just showing it. */}
-                                                    <div>
+                                                    <div className="md:hidden">
                                                         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Subject</span>
-                                                        <span className="text-sm text-gray-500">{feedback.subject}</span>
+                                                        <span className="text-sm text-gray-500 break-words">{feedback.subject}</span>
                                                     </div>
                                                 </div>
                                             </td>

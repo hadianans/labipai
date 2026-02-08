@@ -93,14 +93,14 @@ export default function AdminLayout({ user, header, children }) {
         // Keep Courses and Feedbacks top level for now or ask user?
         // User didn't specify where 'Courses' goes. Let's assume it stays top-level or moves to Organization?
         // Let's keep it top-level as per "If the menus go all the way down" instruction implies keeping some.
-        // { name: 'Courses', route: 'admin.courses.index', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
+        // { name: 'Courses', route: 'admin.courses.index', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
         { name: 'Feedbacks', route: 'admin.feedbacks.index', icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
     ];
 
     return (
         <div className="flex bg-gray-100 min-h-screen">
             {/* Sidebar */}
-            <aside className={`fixed inset-y-0 left-0 bg-gray-900 text-white w-64 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-30 flex flex-col`}>
+            <aside className={`fixed inset-y-0 left-0 bg-gray-900 text-white w-64 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-200 ease-in-out z-30 flex flex-col`}>
                 <div className="flex items-center justify-center h-16 border-b border-gray-800 shrink-0">
                     <h1 className="text-2xl font-bold">BaitulHikmah</h1>
                 </div>
@@ -187,10 +187,10 @@ export default function AdminLayout({ user, header, children }) {
             </aside>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col md:ml-64 transition-all duration-200">
+            <div className="flex-1 flex flex-col transition-all duration-200">
                 {/* Topbar */}
                 <header className="bg-white shadow-sm h-16 flex items-center justify-between px-6 shrink-0">
-                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="md:hidden text-gray-500 focus:outline-none">
+                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-gray-500 focus:outline-none">
                         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
@@ -206,14 +206,14 @@ export default function AdminLayout({ user, header, children }) {
                 </header>
 
                 <main className="p-6 h-[calc(100vh-4rem)] overflow-y-auto">
-                    {header && <div className="mb-6"><h2 className="text-2xl font-bold text-gray-800">{header}</h2></div>}
+                    {header && <div className="mb-6"><h2 className="text-2xl font-bold text-gray-800 xl:mx-12">{header}</h2></div>}
                     {children}
                 </main>
             </div>
 
             {/* Overlay for mobile sidebar */}
             {sidebarOpen && (
-                <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 bg-black opacity-50 z-20 md:hidden"></div>
+                <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 bg-black opacity-50 z-20"></div>
             )}
         </div>
     );

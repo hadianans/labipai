@@ -9,12 +9,13 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useState, useRef, useMemo } from 'react';
 import axios from 'axios';
-import BlotFormatter from 'quill-blot-formatter';
+import QuillResize from 'quill-resize-module';
 import './Create.css';
 
 const Quill = ReactQuill.Quill;
-// Register BlotFormatter
-Quill.register('modules/blotFormatter', BlotFormatter);
+
+// Register resize module
+Quill.register('modules/resize', QuillResize);
 
 export default function Create({ auth, categories }) {
     const quillRef = useRef(null);
@@ -93,7 +94,10 @@ export default function Create({ auth, categories }) {
                 image: imageHandler
             }
         },
-        blotFormatter: {}
+        resize: {
+            modules: ['Resize', 'DisplaySize', 'Toolbar'],
+            tools: ['left', 'center', 'right', 'full']
+        }
     }), []);
 
     const submit = (e) => {

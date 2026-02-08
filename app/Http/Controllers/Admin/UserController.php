@@ -22,13 +22,20 @@ class UserController extends Controller
         $users = User::query()
             ->when($request->search, function ($query, $search) {
                 $query->where('username', 'like', '%' . $search . '%')
-                    ->orWhere('email', 'like', '%' . $search . '%');
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhere('id', 'like', '%' . $search . '%');
             })
             ->when($request->role, function ($query, $role) {
                 $query->where('role', $role);
             })
-            ->when($request->status, function ($query, $status) {
-                $query->where('status', $status);
+            ->when($request->filled('status'), function ($query) use ($request) {
+                if ($request->status === 'unapproved') {
+                    $query->whereHas('unapproveRegister');
+                } elseif ($request->status === '0') {
+                    $query->where('status', '0')->doesntHave('unapproveRegister');
+                } else {
+                    $query->where('status', $request->status);
+                }
             })
             ->paginate(10)
             ->withQueryString();
@@ -86,6 +93,21 @@ class UserController extends Controller
     }
 
     /**
+     * Approve the registered user.
+     */
+    public function approve(User $user): RedirectResponse
+    {
+        $user->status = '1';
+        $user->save();
+
+        if ($user->unapproveRegister) {
+            $user->unapproveRegister->delete();
+        }
+
+        return redirect()->back()->with('success', 'User approved successfully.');
+    }
+
+    /**
      * Update the status of the specified resource.
      */
     public function updateStatus(Request $request, User $user): RedirectResponse
@@ -137,6 +159,13 @@ class UserController extends Controller
     {
         if ($user->id === auth()->id()) {
             return redirect()->back()->withErrors(['message' => 'You cannot delete yourself.']);
+        }
+
+        if ($user->img_url && !str_starts_with($user->img_url, 'http')) {
+            $path = public_path($user->img_url);
+            if (file_exists($path)) {
+                @unlink($path);
+            }
         }
 
         $user->delete();

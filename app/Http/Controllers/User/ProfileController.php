@@ -69,6 +69,13 @@ class ProfileController extends Controller
 
         Auth::logout();
 
+        if ($user->img_url && !str_starts_with($user->img_url, 'http')) {
+            $path = public_path($user->img_url);
+            if (file_exists($path)) {
+                @unlink($path);
+            }
+        }
+
         $user->delete();
 
         $request->session()->invalidate();

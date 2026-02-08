@@ -65,7 +65,7 @@ export default function Index({ auth, fines, filters = {} }) {
         >
             <Head title="Fines" />
 
-            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 xl:mx-8">
 
                 {/* Header Actions */}
                 <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
@@ -104,47 +104,47 @@ export default function Index({ auth, fines, filters = {} }) {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                <div className="overflow-x-auto rounded-md">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Book</th>
-                                <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                <th className="hidden xl:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                {activeTab === 'unpaid' && <th className="hidden sm:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
+                                <th scope="col" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Book</th>
+                                <th scope="col" className="hidden lg:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th scope="col" className="hidden md:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th scope="col" className="hidden xl:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                {activeTab === 'unpaid' && <th scope="col" className="hidden sm:table-cell px-4 py-2 text-right text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {fines.data.map((fine) => (
                                 <React.Fragment key={fine.id}>
                                     <tr className={expandedRows.includes(fine.id) ? 'bg-gray-50' : ''}>
-                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                                            <div className="flex items-center gap-3">
+                                        <td className="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900 font-medium">
+                                            <div className="flex items-center gap-2 sm:gap-3">
                                                 {/* Expand Button */}
                                                 <button
                                                     onClick={() => toggleRow(fine.id)}
                                                     className="xl:hidden flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-50 text-red-600 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500"
                                                 >
                                                     {expandedRows.includes(fine.id) ? (
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" /></svg>
+                                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" /></svg>
                                                     ) : (
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                                                     )}
                                                 </button>
                                                 <div>
-                                                    <div className="text-sm font-medium text-gray-900">{fine.lend?.book?.title || 'Unknown Book'}</div>
-                                                    <div className="text-sm text-gray-500 lg:hidden">{fine.lend?.user?.username || 'Unknown User'}</div>
+                                                    <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-xs" title={fine.lend?.book?.title}>{fine.lend?.book?.title || 'Unknown Book'}</div>
+                                                    <div className="text-[10px] sm:text-xs text-gray-500 lg:hidden truncate max-w-[120px]">{fine.lend?.user?.username || 'Unknown User'}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="hidden lg:table-cell px-4 py-2 whitespace-nowrap text-xs sm:text-sm text-gray-500 truncate max-w-xs">
                                             {fine.lend?.user?.username || 'Unknown User'}
                                         </td>
-                                        <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
+                                        <td className="hidden md:table-cell px-4 py-2 whitespace-nowrap text-xs sm:text-sm text-gray-900 font-bold">
                                             Rp {parseInt(fine.amount).toLocaleString('id-ID')}
                                         </td>
-                                        <td className="hidden xl:table-cell px-6 py-4 whitespace-nowrap text-sm">
+                                        <td className="hidden xl:table-cell px-4 py-2 whitespace-nowrap text-xs sm:text-sm">
                                             {fine.is_paid ? (
                                                 <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                     Paid
@@ -156,7 +156,7 @@ export default function Index({ auth, fines, filters = {} }) {
                                             )}
                                         </td>
                                         {activeTab === 'unpaid' && (
-                                            <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <td className="hidden sm:table-cell px-4 py-2 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
                                                 <button
                                                     onClick={() => handlePay(fine.id)}
                                                     className="text-indigo-600 hover:text-indigo-900"
@@ -170,7 +170,7 @@ export default function Index({ auth, fines, filters = {} }) {
                                     {/* Child Row */}
                                     {expandedRows.includes(fine.id) && (
                                         <tr className="bg-gray-50 xl:hidden">
-                                            <td colSpan="5" className="px-4 py-4 sm:px-6">
+                                            <td colSpan="5" className="px-3 py-3 sm:px-6 sm:py-4">
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                                                     {/* Actions (Hidden on SM) */}

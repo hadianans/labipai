@@ -11,7 +11,7 @@ export default function GuestLayout({ children, title, subtitle }) {
 
                 {/* Branding Top */}
                 <div className="relative z-10 flex items-center gap-3">
-                    <img src="/storage/logo.png" alt="Baitulhikmah" className="h-10 w-auto brightness-0 invert" />
+                    <img src="/storage/logo.png" alt="Baitulhikmah" className="h-10 w-auto" />
                     <span className="text-2xl font-serif font-bold tracking-tight">Baitul<span className="text-accent-400">Hikmah</span></span>
                 </div>
 

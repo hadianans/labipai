@@ -8,22 +8,54 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useState, useRef, useMemo } from 'react';
 import axios from 'axios';
-import BlotFormatter from 'quill-blot-formatter';
+import QuillResize from 'quill-resize-module';
 import './Create.css';
 
 const Quill = ReactQuill.Quill;
-// Register BlotFormatter
-Quill.register('modules/blotFormatter', BlotFormatter);
 
-export default function Edit({ auth, article, categories }) {
+// Register resize module
+Quill.register('modules/resize', QuillResize);
+
+export default function Edit({ article, categories, auth }) {
     const quillRef = useRef(null);
     const [imagePreview, setImagePreview] = useState(article.img_url ? `/storage/${article.img_url}` : null);
+
+    // Normalize alignment span to inline style for Quill
+    function normalizeContentForEditor(html) {
+        if (!html) return '';
+        // Replace <span class="ql-resize-style-center"><img ...></span> with <img ... style="display:block;margin-left:auto;margin-right:auto;">
+        return html.replace(/<span class="ql-resize-style-center">\s*(<img [^>]+>)\s*<\/span>/g, (match, imgTag) => {
+            // Add style to imgTag
+            if (imgTag.includes('style=')) {
+                return imgTag.replace(/style=["']([^"']*)["']/, (m, s) => `style="${s};display:block;margin-left:auto;margin-right:auto;"`);
+            } else {
+                return imgTag.replace(/<img /, '<img style="display:block;margin-left:auto;margin-right:auto;" ');
+            }
+        });
+    }
+
+    // Optionally, convert back to span before save (not required unless you want DB to keep span)
+    function normalizeContentForSave(html) {
+        if (!html) return '';
+        // Only convert <img ... style*="margin-left:auto;margin-right:auto"> to span if needed
+        return html.replace(/<img([^>]*?)style=["']([^"']*margin-left\s*:\s*auto;?margin-right\s*:\s*auto;?[^"']*)["']([^>]*)>/g, (match, before, style, after) => {
+            // Remove margin-left:auto;margin-right:auto; from style
+            let newStyle = style.replace(/margin-left\s*:\s*auto;?/g, '').replace(/margin-right\s*:\s*auto;?/g, '').replace(/;;/g, ';');
+            // Clean up style
+            newStyle = newStyle.trim().replace(/^;|;$/g, '');
+            let imgTag = `<img${before}style="${newStyle}"${after}>`;
+            if (newStyle === '' || newStyle === ';') {
+                imgTag = `<img${before}${after}>`;
+            }
+            return `<span class="ql-resize-style-center">${imgTag}</span>`;
+        });
+    }
 
     const { data, setData, post, processing, errors } = useForm({
         _method: 'PUT',
         title: article.title,
         excerpt: article.excerpt || '',
-        content: article.content || '',
+        content: normalizeContentForEditor(article.content || ''),
         status: article.status,
         image: null,
         categories: article.categories.map(c => c.id),
@@ -86,12 +118,22 @@ export default function Edit({ auth, article, categories }) {
                 image: imageHandler
             }
         },
-        blotFormatter: {}
+        resize: {
+            modules: ['Resize', 'DisplaySize', 'Toolbar'],
+            tools: ['left', 'center', 'right', 'full']
+        }
     }), []);
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('admin.articles.update', article.id));
+        // Optionally, normalize content for save
+        const normalized = {
+            ...data,
+            content: normalizeContentForSave(data.content)
+        };
+        post(route('admin.articles.update', article.id), {
+            data: normalized
+        });
     };
 
     return (

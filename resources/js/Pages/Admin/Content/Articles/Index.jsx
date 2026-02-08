@@ -1,3 +1,4 @@
+import React from 'react';
 import AdminLayout from '@/Layouts/Admin/AdminLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -118,7 +119,7 @@ export default function Index({ auth, articles, categories = [], filters = {} })
         >
             <Head title="Articles" />
 
-            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 xl:mx-8">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <h3 className="text-lg font-medium text-gray-900">All Articles</h3>
 
@@ -130,7 +131,7 @@ export default function Index({ auth, articles, categories = [], filters = {} })
                             onChange={(e) => handleSearch(e.target.value)}
                             className="w-full md:w-64 p-2"
                         />
-                        <div className="flex space-x-3">
+                        <div className="flex space-x-3 justify-center">
                             <SecondaryButton onClick={() => openCategoryModal()}>
                                 Manage Categories
                             </SecondaryButton>
@@ -149,9 +150,9 @@ export default function Index({ auth, articles, categories = [], filters = {} })
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                                <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
                                 <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categories</th>
+                                <th className="hidden xl:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categories</th>
                                 <th className="hidden sm:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -159,8 +160,8 @@ export default function Index({ auth, articles, categories = [], filters = {} })
                             {articles.map((article) => (
                                 <React.Fragment key={article.id}>
                                     <tr className={expandedRows.includes(article.id) ? 'bg-gray-50' : ''}>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-3">
+                                        <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-2 sm:gap-3">
                                                 <button
                                                     onClick={() => toggleRow(article.id)}
                                                     className="lg:hidden flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -173,23 +174,23 @@ export default function Index({ auth, articles, categories = [], filters = {} })
                                                 </button>
                                                 <div className="flex items-center">
                                                     {article.img_url ? (
-                                                        <img className="h-10 w-10 rounded object-cover mr-3" src={`/storage/${article.img_url}`} alt="" />
+                                                        <img className="hidden sm:flex h-10 w-10 rounded object-cover mr-3" src={`/storage/${article.img_url}`} alt="" />
                                                     ) : (
-                                                        <div className="h-10 w-10 rounded bg-gray-100 flex items-center justify-center mr-3 text-gray-400">
+                                                        <div className="hidden sm:flex h-10 w-10 rounded bg-gray-100 flex items-center justify-center mr-3 text-gray-400">
                                                             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" /></svg>
                                                         </div>
                                                     )}
-                                                    <div className="text-sm font-medium text-gray-900">{article.title}</div>
+                                                    <div className="text-sm font-medium text-gray-900 truncate max-w-[clamp(160px,60vw,400px)] sm:max-w-[clamp(160px,40vw,400px)]">{article.title}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{article.author}</td>
+                                        <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{article.author}</td>
                                         <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
                                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${article.status === '1' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
                                                 {article.status === '1' ? 'Published' : 'Draft'}
                                             </span>
                                         </td>
-                                        <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="hidden xl:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {article.categories.map(cat => cat.name).join(', ')}
                                         </td>
                                         <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

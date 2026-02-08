@@ -22,4 +22,9 @@ class Administrator extends Model
         'description',
         'img_url',
     ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+        'is_chief' => 'boolean',
+    ];
 }

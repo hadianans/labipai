@@ -103,62 +103,62 @@ export default function Index({ auth, bookings, users }) {
         >
             <Head title="Room Bookings" />
 
-            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 xl:mx-8">
                 <div className="flex justify-between mb-6">
                     <h3 className="text-lg font-medium text-gray-900">Bookings List</h3>
                     <PrimaryButton onClick={() => openModal()}>Create Booking</PrimaryButton>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-md">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room/Title</th>
-                                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booked By</th> */}
-                                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
-                                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Time</th>
-                                <th className="hidden sm:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th scope="col" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Room/Title</th>
+                                {/* <th scope="col" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Booked By</th> */}
+                                <th scope="col" className="table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
+                                <th scope="col" className="hidden md:table-cell px-4 py-2 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">End Time</th>
+                                <th scope="col" className="hidden sm:table-cell px-4 py-2 text-right text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {bookings.map((booking) => (
                                 <React.Fragment key={booking.id}>
                                     <tr className={expandedRows.includes(booking.id) ? 'bg-gray-50' : ''}>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-3">
+                                        <td className="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap">
+                                            <div className="flex items-center gap-2 sm:gap-3">
                                                 <button
                                                     onClick={() => toggleRow(booking.id)}
                                                     className="md:hidden flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                                 >
                                                     {expandedRows.includes(booking.id) ? (
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" /></svg>
+                                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" /></svg>
                                                     ) : (
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                                                     )}
                                                 </button>
                                                 <div>
-                                                    <div className="text-sm font-medium text-gray-900">{booking.title}</div>
-                                                    <div className="text-xs text-gray-500">{booking.description}</div>
+                                                    <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[clamp(150px,40vw,300px)] sm:max-w-md">{booking.title}</div>
+                                                    <div className="text-xs text-gray-500 whitespace-normal break-words">{booking.description}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {/* <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                                             {booking.user.username ? booking.user.name : 'System/Admin'}
                                         </td> */}
-                                        <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="table-cell px-4 py-2 whitespace-normal break-words text-xs sm:text-sm text-gray-500">
                                             {new Date(booking.start_time).toLocaleString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).replace(/\./g, ':')}
                                         </td>
-                                        <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="hidden md:table-cell px-4 py-2 whitespace-normal break-words text-xs sm:text-sm text-gray-500">
                                             {new Date(booking.end_time).toLocaleString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).replace(/\./g, ':')}
                                         </td>
-                                        <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <td className="hidden sm:table-cell px-4 py-2 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
                                             <button onClick={() => openModal(booking)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
                                             <button onClick={() => handleDelete(booking)} className="text-red-600 hover:text-red-900">Delete</button>
                                         </td>
                                     </tr>
                                     {expandedRows.includes(booking.id) && (
                                         <tr className="bg-gray-50 md:hidden">
-                                            <td colSpan="4" className="px-6 py-4">
+                                            <td colSpan="4" className="px-3 py-3 sm:px-6 sm:py-4">
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                     <div className="sm:hidden">
                                                         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Actions</span>
