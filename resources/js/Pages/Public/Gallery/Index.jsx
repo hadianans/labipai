@@ -2,6 +2,7 @@ import PublicLayout from '@/Layouts/PublicLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import Modal from '@/Components/Modal';
+import Pagination from '@/Components/Pagination';
 
 export default function Index({ gallery, tags }) {
     const { url } = usePage();
@@ -76,26 +77,7 @@ export default function Index({ gallery, tags }) {
                 )}
                 {/* Pagination */}
                 <div className="mt-12">
-                    {gallery.links && (
-                        <div className="flex justify-center space-x-2">
-                            {gallery.links.map((link, key) => (
-                                link.url ? (
-                                    <Link
-                                        key={key}
-                                        href={link.url}
-                                        className={`px-4 py-2 border rounded-md transition ${link.active ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-700 hover:bg-gray-50 border-gray-300'}`}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                    />
-                                ) : (
-                                    <span
-                                        key={key}
-                                        className="px-4 py-2 border rounded-md bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                    />
-                                )
-                            ))}
-                        </div>
-                    )}
+                    <Pagination links={gallery.links} />
                 </div>
             </div>
 

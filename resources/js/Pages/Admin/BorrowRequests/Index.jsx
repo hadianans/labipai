@@ -3,6 +3,7 @@ import AdminLayout from '@/Layouts/Admin/AdminLayout';
 import { Head, useForm, router } from '@inertiajs/react';
 import TextInput from '@/Components/TextInput';
 import Swal from 'sweetalert2';
+import Pagination from '@/Components/Pagination';
 import { debounce } from 'lodash';
 
 export default function Index({ auth, requests, filters = {} }) {
@@ -263,6 +264,11 @@ export default function Index({ auth, requests, filters = {} }) {
                                         )}
                                     </tbody>
                                 </table>
+                            </div>
+
+                            {/* Pagination */}
+                            <div className="mt-4">
+                                <Pagination links={requests.links} />
                             </div>
 
                         </div>

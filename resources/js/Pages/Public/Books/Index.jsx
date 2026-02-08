@@ -1,30 +1,122 @@
-import React, { useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
+import axios from 'axios';
 
-export default function BookIndex({ books, genres }) {
+export default function BookIndex({ books, genres, seed }) {
+    const { version } = usePage();
+    const [currentSeed, setCurrentSeed] = useState(seed);
     const [search, setSearch] = useState('');
     const [selectedGenre, setSelectedGenre] = useState('All');
     const [selectedBook, setSelectedBook] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
 
-    // const genres = ['Fiction', 'Islamic', 'Science', 'History', 'Philosophy', 'Technology', 'Arts', 'Biography'];
+    // Infinite scroll state
+    const [allBooks, setAllBooks] = useState(books.data || []);
+    const [currentPage, setCurrentPage] = useState(books.current_page || 1);
+    const [hasMore, setHasMore] = useState(books.next_page_url !== null);
+    const [loading, setLoading] = useState(false);
+    const [seenIds, setSeenIds] = useState(new Set((books.data || []).map(b => b.id)));
 
-    const filteredBooks = books.filter((book) => {
-        const matchesSearch = book.title.toLowerCase().includes(search.toLowerCase()) ||
-            book.author.toLowerCase().includes(search.toLowerCase());
+    const observerRef = useRef(null);
+    const loadMoreRef = useRef(null);
 
-        let matchesGenre = true;
-        if (selectedGenre !== 'All') {
-            // Check if book has genres relation loaded (it should be an array of objects)
-            // Using 'some' to check if any of the book's genres match the selected genre
-            matchesGenre = book.genres && book.genres.some(g => g.name === selectedGenre);
-            // Fallback if genres is not loaded or different structure (e.g. if we fetched 'genres' string, but here we expect relation)
-            // Based on Controller, we did `with('genres')`, so book.genres is array of Genre models.
+    // Reset when search or genre changes
+    useEffect(() => {
+        // Build URL with query params
+        const params = new URLSearchParams();
+        if (search) params.set('search', search);
+        if (selectedGenre !== 'All') params.set('genre', selectedGenre);
+
+        // Debounce the search
+        const timer = setTimeout(() => {
+            router.get('/books', Object.fromEntries(params), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['books'],
+                onSuccess: (page) => {
+                    const newBooks = page.props.books.data || [];
+                    setAllBooks(newBooks);
+                    setCurrentPage(page.props.books.current_page || 1);
+                    setHasMore(page.props.books.next_page_url !== null);
+                    setSeenIds(new Set(newBooks.map(b => b.id)));
+                    setCurrentSeed(page.props.seed);
+                }
+            });
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [search, selectedGenre]);
+
+    // Load more books function
+    const loadMoreBooks = useCallback(() => {
+        if (loading || !hasMore) return;
+
+        setLoading(true);
+        const nextPage = currentPage + 1;
+
+        const params = new URLSearchParams();
+        params.set('page', nextPage.toString());
+        if (search) params.set('search', search);
+        if (selectedGenre !== 'All') params.set('genre', selectedGenre);
+        if (currentSeed) params.set('seed', currentSeed);
+
+        axios.get(`/books?${params.toString()}`, {
+            headers: {
+                'X-Inertia': 'true',
+                'X-Inertia-Partial-Data': 'books',
+                'X-Inertia-Partial-Component': 'Public/Books/Index',
+                'X-Inertia-Version': version,
+                'Accept': 'application/json',
+            }
+        })
+            .then(response => {
+                const data = response.data;
+                const newBooks = data.props.books.data || [];
+
+                // Filter out duplicates
+                const uniqueNewBooks = newBooks.filter(book => !seenIds.has(book.id));
+
+                if (uniqueNewBooks.length > 0) {
+                    setAllBooks(prev => [...prev, ...uniqueNewBooks]);
+                    setSeenIds(prev => {
+                        const newSet = new Set(prev);
+                        uniqueNewBooks.forEach(b => newSet.add(b.id));
+                        return newSet;
+                    });
+                }
+
+                setCurrentPage(data.props.books.current_page);
+                setHasMore(data.props.books.next_page_url !== null);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error('Error loading more books:', err);
+                setLoading(false);
+            });
+    }, [loading, hasMore, currentPage, search, selectedGenre, seenIds, version, currentSeed]);
+
+    // Intersection Observer for infinite scroll
+    useEffect(() => {
+        if (observerRef.current) observerRef.current.disconnect();
+
+        observerRef.current = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasMore && !loading) {
+                    loadMoreBooks();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (loadMoreRef.current) {
+            observerRef.current.observe(loadMoreRef.current);
         }
 
-        return matchesSearch && matchesGenre;
-    });
+        return () => {
+            if (observerRef.current) observerRef.current.disconnect();
+        };
+    }, [hasMore, loading, loadMoreBooks]);
 
     const openModal = (book) => {
         setSelectedBook(book);
@@ -93,9 +185,8 @@ export default function BookIndex({ books, genres }) {
 
                     {/* Book Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {filteredBooks.map((book) => (
+                        {allBooks.map((book) => (
                             <div key={book.id} onClick={() => openModal(book)} className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden cursor-pointer flex flex-col h-full">
-                                {/* Placeholder Image Container */}
                                 {/* Image Container */}
                                 <div className="relative aspect-[3/4] bg-gray-200 overflow-hidden">
                                     {book.img_url ? (
@@ -116,8 +207,8 @@ export default function BookIndex({ books, genres }) {
 
                                     {/* Status Badge */}
                                     <div className="absolute top-2 right-2">
-                                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wide shadow-sm ${book.status === '0' ? 'bg-green-100 text-green-800' :
-                                            book.status === '1' ? 'bg-yellow-100 text-yellow-800' :
+                                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wide shadow-sm ${book.status === '0' || book.status === 0 ? 'bg-green-100 text-green-800' :
+                                            book.status === '1' || book.status === 1 ? 'bg-yellow-100 text-yellow-800' :
                                                 'bg-red-100 text-red-800'
                                             }`}>
                                             {book.status_label}
@@ -144,8 +235,25 @@ export default function BookIndex({ books, genres }) {
                         ))}
                     </div>
 
+                    {/* Loading Indicator & Infinite Scroll Trigger */}
+                    <div ref={loadMoreRef} className="flex justify-center py-8">
+                        {loading ? (
+                            <div className="flex items-center gap-2 text-gray-500">
+                                <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Loading more books...</span>
+                            </div>
+                        ) : hasMore ? (
+                            <span className="text-gray-400 text-sm">Scroll for more</span>
+                        ) : allBooks.length > 0 ? (
+                            <span className="text-gray-400 text-sm">No more books to load</span>
+                        ) : null}
+                    </div>
+
                     {/* Empty State */}
-                    {filteredBooks.length === 0 && (
+                    {allBooks.length === 0 && !loading && (
                         <div className="text-center py-20">
                             <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                             <h3 className="text-lg font-medium text-gray-900">No books found</h3>
@@ -179,11 +287,17 @@ export default function BookIndex({ books, genres }) {
                             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 {selectedBook && (
                                     <div className="sm:flex sm:items-start gap-8">
-                                        {/* Left: Image Placeholder */}
+                                        {/* Left: Image */}
                                         <div className="mt-3 text-center sm:mt-0 sm:text-left w-full sm:w-1/3 flex-shrink-0">
                                             <div className="aspect-[2/3] rounded-lg overflow-hidden bg-gray-200 shadow-md flex items-center justify-center text-gray-400 flex-col">
-                                                <svg className="w-16 h-16 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                                <span className="text-sm font-semibold uppercase tracking-wider">Book Preview</span>
+                                                {selectedBook.img_url ? (
+                                                    <img src={selectedBook.img_url} alt={selectedBook.title} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <>
+                                                        <svg className="w-16 h-16 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                                        <span className="text-sm font-semibold uppercase tracking-wider">Book Preview</span>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
 
@@ -216,10 +330,9 @@ export default function BookIndex({ books, genres }) {
                                                 </div>
                                             </div>
 
-
                                             <p className="text-gray-600 leading-relaxed mb-6">{selectedBook.synopsis}</p>
 
-                                            {/* Available Copies Section (Mock Data for Preview) */}
+                                            {/* Available Copies Section */}
                                             <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
                                                 <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center justify-between">
                                                     <span className="flex items-center">
@@ -227,40 +340,24 @@ export default function BookIndex({ books, genres }) {
                                                         Available Copies
                                                     </span>
                                                     <span className="text-xs font-normal text-gray-500 bg-white px-2 py-0.5 rounded border border-gray-200">
-                                                        {selectedBook.copies.filter(c => c.status === '0').length} Available
+                                                        {selectedBook.copies ? selectedBook.copies.filter(c => c.status === '0' || c.status === 0).length : 0} Available
                                                     </span>
                                                 </h3>
                                                 <div className="max-h-32 overflow-y-auto pr-1 custom-scrollbar">
                                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                                                         {selectedBook.copies ? selectedBook.copies.map((copy, idx) => (
-                                                            <div key={idx} className={`text-xs px-2 py-1.5 rounded border flex justify-between items-center ${copy.status === '0' ? 'bg-white border-green-200 hover:border-green-300' :
-                                                                copy.status === '1' ? 'bg-gray-50 border-gray-200 text-gray-400' : 'bg-red-50 border-red-100 text-red-400'
+                                                            <div key={idx} className={`text-xs px-2 py-1.5 rounded border flex justify-between items-center ${copy.status === '0' || copy.status === 0 ? 'bg-white border-green-200 hover:border-green-300' :
+                                                                copy.status === '1' || copy.status === 1 ? 'bg-gray-50 border-gray-200 text-gray-400' : 'bg-red-50 border-red-100 text-red-400'
                                                                 }`}>
-                                                                <span className={`font-mono font-medium ${copy.status === '0' ? 'text-gray-700' : ''}`}>{copy.id.split('-')[1] || copy.id}</span>
-                                                                <div className={`w-1.5 h-1.5 rounded-full ${copy.status === '0' ? 'bg-green-500' :
-                                                                    copy.status === '1' ? 'bg-yellow-500' : 'bg-red-500'
+                                                                <span className={`font-mono font-medium ${copy.status === '0' || copy.status === 0 ? 'text-gray-700' : ''}`}>{copy.id.split('-')[1] || copy.id}</span>
+                                                                <div className={`w-1.5 h-1.5 rounded-full ${copy.status === '0' || copy.status === 0 ? 'bg-green-500' :
+                                                                    copy.status === '1' || copy.status === 1 ? 'bg-yellow-500' : 'bg-red-500'
                                                                     }`}></div>
                                                             </div>
-                                                        )) : (
-                                                            // Mock copies logic for preview if actual data isn't loaded
-                                                            [...Array(10)].map((_, i) => {
-                                                                const status = i % 3 === 0 ? '0' : i % 3 === 1 ? '1' : '0'; // Mostly available
-                                                                return (
-                                                                    <div key={i} className={`text-xs px-2 py-1.5 rounded border flex justify-between items-center ${status === '0' ? 'bg-white border-green-200 hover:border-green-300' :
-                                                                        status === '1' ? 'bg-gray-50 border-gray-200 text-gray-400' : 'bg-red-50 border-red-100 text-red-400'
-                                                                        }`}>
-                                                                        <span className={`font-mono font-medium ${status === '0' ? 'text-gray-700' : ''}`}>{String.fromCharCode(65 + i)}</span>
-                                                                        <div className={`w-1.5 h-1.5 rounded-full ${status === '0' ? 'bg-green-500' :
-                                                                            status === '1' ? 'bg-yellow-500' : 'bg-red-500'
-                                                                            }`}></div>
-                                                                    </div>
-                                                                )
-                                                            })
-                                                        )}
+                                                        )) : null}
                                                     </div>
                                                 </div>
                                                 <div className="mt-2 flex justify-between text-[10px] text-gray-400 px-1">
-                                                    {/* <span>ID Series: {selectedBook.id}-...</span> */}
                                                     <div className="flex gap-3">
                                                         <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-green-500"></div> Avail</span>
                                                         <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div> Borrowed</span>
@@ -274,8 +371,8 @@ export default function BookIndex({ books, genres }) {
                                                 </Link>
                                                 <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg">
                                                     <span className="text-sm font-semibold text-gray-500">Status:</span>
-                                                    <span className={`font-bold uppercase text-sm ${selectedBook.status === '0' ? 'text-green-600' :
-                                                        selectedBook.status === '1' ? 'text-yellow-600' :
+                                                    <span className={`font-bold uppercase text-sm ${selectedBook.status === '0' || selectedBook.status === 0 ? 'text-green-600' :
+                                                        selectedBook.status === '1' || selectedBook.status === 1 ? 'text-yellow-600' :
                                                             'text-red-600'
                                                         }`}>
                                                         {selectedBook.status_label}

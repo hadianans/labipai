@@ -10,6 +10,7 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import { debounce } from 'lodash';
+import Pagination from '@/Components/Pagination';
 
 export default function Index({ auth, articles, categories = [], filters = {} }) {
     const [search, setSearch] = useState(filters.search || '');
@@ -256,6 +257,11 @@ export default function Index({ auth, articles, categories = [], filters = {} })
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="mt-4">
+                    <Pagination links={articles.links} />
                 </div>
             </div>
 

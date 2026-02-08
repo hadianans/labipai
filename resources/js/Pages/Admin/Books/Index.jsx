@@ -2,6 +2,7 @@ import React from 'react';
 import AdminLayout from '@/Layouts/Admin/AdminLayout';
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import Swal from 'sweetalert2';
+import Pagination from '@/Components/Pagination';
 
 export default function Index({ auth, books, filters }) {
     const { url } = usePage();
@@ -237,26 +238,9 @@ export default function Index({ auth, books, filters }) {
                     </div>
 
                     {/* Pagination */}
-                    {books.links && books.links.length > 3 && (
-                        <div className="mt-4 flex flex-wrap gap-1 justify-center">
-                            {books.links.map((link, key) => (
-                                link.url ? (
-                                    <Link
-                                        key={key}
-                                        href={link.url}
-                                        className={`px-3 py-1 border rounded text-sm ${link.active ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                    />
-                                ) : (
-                                    <span
-                                        key={key}
-                                        className="px-3 py-1 border rounded text-sm text-gray-400 bg-gray-50"
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                    />
-                                )
-                            ))}
-                        </div>
-                    )}
+                    <div className="mt-4">
+                        <Pagination links={books.links} />
+                    </div>
                 </div>
             </div>
         </AdminLayout>

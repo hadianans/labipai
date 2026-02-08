@@ -93,7 +93,7 @@ class PublicController extends Controller
                     'id' => $book->id,
                     'title' => $book->title,
                     'author' => $book->author,
-                    'img_url' => $book->img_url ? '/storage/' . $book->img_url : null,
+                    'img_url' => $book->img_url ? $this->formatStoragePath($book->img_url) : null,
                     'rating' => $book->reviews()->avg('star') ?? 0,
                 ];
             });
@@ -138,12 +138,35 @@ class PublicController extends Controller
         // Only show books marked for display (handles duplicate grouping)
         $query->where('is_show', true);
 
-        $books_pagination = $query->latest()->paginate(12)->withQueryString();
+        // Seeded Random Order for infinite scroll consistency
+        $seed = $request->input('seed', rand());
 
-        // Transform collection to add status_label and reviews_count if not in model
-        // Using map on items, but pagination returns LengthAwarePaginator.
-        // Better to use API Resource, but for quick implementation via Inertia:
-        $books_pagination->getCollection()->transform(function ($book) {
+        // Paginate for infinite scroll - 12 items per page
+        $perPage = 12;
+        $books = $query->inRandomOrder($seed)->paginate($perPage)->withQueryString();
+
+        // Transform the collection
+        $books->getCollection()->transform(function ($book) {
+            // Fetch copies for this book
+            $copies = [];
+            $myCopy = \App\Models\BookCopy::where('book_id', $book->id)->first();
+
+            if ($myCopy) {
+                $copies = \App\Models\Book::join('book_copy', 'book.id', '=', 'book_copy.book_id')
+                    ->where('book_copy.duplicate_code', $myCopy->duplicate_code)
+                    ->select('book.id', 'book.status')
+                    ->orderBy('book.id')
+                    ->get()
+                    ->map(function ($b) {
+                        return [
+                            'id' => (string) $b->id,
+                            'status' => (string) $b->status,
+                        ];
+                    })->toArray();
+            } else {
+                $copies = [['id' => (string) $book->id, 'status' => (string) $book->status]];
+            }
+
             return [
                 'id' => $book->id,
                 'title' => $book->title,
@@ -156,89 +179,25 @@ class PublicController extends Controller
                 'language' => $book->language,
                 'synopsis' => $book->synopsis,
                 'status' => $book->status,
-                'status_label' => match ($book->status) {
-                    '0' => 'Tersedia',
-                    '1' => 'Dipinjam',
-                    '2' => 'Hilang',
+                'status_label' => match ((string) $book->status) {
+                    '0', 0 => 'Tersedia',
+                    '1', 1 => 'Dipinjam',
+                    '2', 2 => 'Hilang',
                     default => 'Unknown'
                 },
                 'type' => $book->type,
-                'img_url' => $book->img_url ? '/storage/' . $book->img_url : null, // Ensure full path if stored as relative
-                'rating' => 4.5, // Placeholder or relation
-                'reviews_count' => 0 // Placeholder or relation
+                'img_url' => $book->img_url ? $this->formatStoragePath($book->img_url) : null,
+                'rating' => 5.0,
+                'reviews_count' => 0,
+                'copies' => $copies,
+                'genres' => $book->genres,
             ];
         });
 
-        // Use 'books' as key for Inertia
         return \Inertia\Inertia::render('Public/Books/Index', [
-            // Inertia expects 'books' to be the paginator object (usually) or data array.
-            // Frontend expects `books` prop. Currently mock data was array.
-            // If I pass paginator, `books.data` is the array.
-            // The current frontend `Index.jsx` uses `books.filter(...)` which implies it expects an Array.
-            // If I pass pagination object, it breaks `books.filter`.
-            // I should pass `$books_pagination->items()` or Refactor Frontend to handle pagination.
-            // For now, to satisfy "Show database books" without breaking UI logic completely:
-            // I'll return `books_pagination->items()` (array) but this loses pagination links.
-            // The user didn't ask for pagination UI, but filtering/search logic is in frontend in current Index.jsx!
-            // Wait, `Index.jsx` lines 13-19 do Frontend Filtering.
-            // So I should pass ALL books? Or refactor frontend?
-            // Since the code I saw in `Index.jsx` has client-side filtering (`books.filter...`),
-            // fetching ALL books might be heavy but safest for "keep existing frontend logic working".
-            // However, `PublicController` mock data was small.
-            // I will fetch `get()` instead of `paginate()` to mimic current behavior and let frontend filter.
-            // But if DB is large, this is bad.
-            // I will implement server-side filtering (already wrote query logic) and pass the result.
-            // If I pass filtered result, frontend filter will just re-filter (and find match).
-            // But Frontend `selectedGenre` state default is 'All'.
-            // I should probably just return `get()` for now to match exactly the `books` prop expectation (Array).
-            'books' => $query->get()->map(function ($book) {
-                // Fetch copies for this book
-                $copies = [];
-                $myCopy = \App\Models\BookCopy::where('book_id', $book->id)->first();
-
-                if ($myCopy) {
-                    $copies = \App\Models\Book::join('book_copy', 'book.id', '=', 'book_copy.book_id')
-                        ->where('book_copy.duplicate_code', $myCopy->duplicate_code)
-                        ->select('book.id', 'book.status')
-                        ->orderBy('book.id')
-                        ->get()
-                        ->map(function ($b) {
-                            return [
-                                'id' => (string) $b->id,
-                                'status' => (string) $b->status,
-                            ];
-                        })->toArray();
-                } else {
-                    $copies = [['id' => (string) $book->id, 'status' => (string) $book->status]];
-                }
-
-                return [
-                    'id' => $book->id,
-                    'title' => $book->title,
-                    'author' => $book->author,
-                    'publisher' => $book->publisher,
-                    'year' => $book->year,
-                    'isbn' => $book->isbn,
-                    'page' => $book->page,
-                    'volume' => $book->volume,
-                    'language' => $book->language,
-                    'synopsis' => $book->synopsis,
-                    'status' => $book->status,
-                    'status_label' => match ((string) $book->status) {
-                        '0', 0 => 'Tersedia',
-                        '1', 1 => 'Dipinjam',
-                        '2', 2 => 'Hilang',
-                        default => 'Unknown'
-                    },
-                    'type' => $book->type,
-                    'img_url' => $book->img_url ? '/storage/' . $book->img_url : null,
-                    'rating' => 5.0,
-                    'reviews_count' => 0,
-                    'copies' => $copies,
-                    'genres' => $book->genres, // Pass genres relation
-                ];
-            })->all(),
-            'genres' => \App\Models\Genre::pluck('name')
+            'books' => $books,
+            'genres' => \App\Models\Genre::pluck('name'),
+            'seed' => $seed,
         ]);
     }
 
@@ -291,7 +250,7 @@ class PublicController extends Controller
                 default => 'Unknown'
             },
             'type' => $bookModel->type,
-            'img_url' => $bookModel->img_url ? '/storage/' . $bookModel->img_url : null,
+            'img_url' => $bookModel->img_url ? $this->formatStoragePath($bookModel->img_url) : null,
             'rating' => $bookModel->reviews()->avg('star') ?? 0,
             'reviews_count' => $bookModel->reviews()->count(),
             'copies' => (function () use ($bookModel) {
@@ -462,5 +421,24 @@ class PublicController extends Controller
     public function courses()
     {
         return \Inertia\Inertia::render('Public/Courses/Index');
+    }
+
+    /**
+     * Helper function to format storage path and avoid double /storage/ prefix
+     */
+    private function formatStoragePath($path)
+    {
+        if (!$path)
+            return null;
+
+        // Remove leading slashes for consistent checking
+        $cleanPath = ltrim($path, '/');
+
+        // Check if path already starts with 'storage/'
+        if (str_starts_with($cleanPath, 'storage/')) {
+            return '/' . $cleanPath;
+        }
+
+        return '/storage/' . $cleanPath;
     }
 }

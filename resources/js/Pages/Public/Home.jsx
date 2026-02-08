@@ -139,10 +139,10 @@ export default function Home({ slides, vision, stats, programs, randomBooks, con
                             </div>
                         </div>
                         <div className="order-1 md:order-2">
-                            <h2 className="text-primary-600 font-bold uppercase tracking-wide text-sm mb-2">Apa yang kami?</h2>
+                            <h2 className="text-primary-600 font-bold uppercase tracking-wide text-sm mb-2">Apa yang kami cari?</h2>
                             <h3 className="text-4xl font-serif font-bold text-gray-900 mb-6">Sebuah Harapan</h3>
                             <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                                Baitulhikmah lebih dari sekadar perpustakaan; ia adalah pusat pertumbuhan intelektual. Kami berupaya menciptakan lingkungan yang mendukung perkembangan ilmu.
+                                Baitulhikmah lebih dari sekadar perpustakaan, ia adalah pusat pertumbuhan intelektual. Kami berupaya menciptakan lingkungan yang mendukung perkembangan ilmu.
                             </p>
                             <Link href="/about" className="text-secondary-600 font-semibold hover:text-secondary-700 flex items-center group">
                                 Learn more about us
@@ -232,8 +232,8 @@ export default function Home({ slides, vision, stats, programs, randomBooks, con
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-end mb-8">
                         <div>
-                            <h2 className="text-sm font-bold text-primary-600 uppercase tracking-widest mb-2">Our Programs</h2>
-                            <h3 className="text-3xl md:text-4xl font-serif font-bold text-gray-900">Pathways to Knowledge</h3>
+                            <h2 className="text-sm font-bold text-primary-600 uppercase tracking-widest mb-2">Program Kami</h2>
+                            <h3 className="text-3xl md:text-4xl font-serif font-bold text-gray-900">Jelajahi Pengetahuan</h3>
                         </div>
                         <Link href="/about#programs" className="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
                             View All <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
@@ -247,7 +247,7 @@ export default function Home({ slides, vision, stats, programs, randomBooks, con
                                     {program.img_url ? (
                                         <img src={`/storage/${program.img_url}`} alt={program.name} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" />
                                     ) : (
-                                        <div className="flex items-center justify-center h-full bg-primary-50 text-primary-200">
+                                        <div className="flex items-center justify-center w-full h-full bg-primary-50 text-primary-200">
                                             <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-1.96-2.36L6.5 17h11l-3.54-4.71z" /></svg>
                                         </div>
                                     )}

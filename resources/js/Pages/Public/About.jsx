@@ -54,7 +54,7 @@ export default function About({ vision, administrators, programs }) {
                             </h2>
                             <div className="prose prose-lg text-gray-600 leading-relaxed font-light">
                                 <p className="mb-6 first-letter:text-5xl first-letter:font-serif first-letter:text-primary-800 first-letter:mr-2 first-letter:float-left">
-                                    Baitulhikmah di bawah naungan program studi Ilmu Pendidikan Agama Islam UPI, didirikan dengan satu tujuan tunggal: untuk menjembatani kesenjangan antara warisan Islam klasik dan kebutuhan pendidikan modern. Berawal dari kelompok baca kecil, kami telah berkembang menjadi pusat pembelajaran, penelitian, dan pengembangan komunitas yang komprehensif.
+                                    Baitulhikmah di bawah naungan program studi Ilmu Pendidikan Agama Islam UPI, didirikan dengan semangat mencari kembali kepingan budaya keilmuan dari masa kejayaan umat Islam. Berawal dari kelompok baca kecil, kami telah berkembang menjadi pusat pembelajaran, penelitian, dan pengembangan komunitas yang komprehensif.
                                 </p>
                                 <p>
                                     Selama bertahun-tahun, kami telah mengumpulkan para cendekiawan, mahasiswa, dan profesional yang berdedikasi terhadap ilmu. Perjalanan kami adalah pertumbuhan yang berkelanjutan, didorong oleh semangat jihad di jalan-Nya dan menginspirasi generasi mendatang.
