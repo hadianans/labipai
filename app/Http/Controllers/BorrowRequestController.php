@@ -51,7 +51,7 @@ class BorrowRequestController extends Controller
 
     public function cancel(BorrowRequest $borrowRequest)
     {
-        if ($borrowRequest->user_id !== auth()->id()) {
+        if ((int) $borrowRequest->user_id !== (int) auth()->id()) {
             abort(403);
         }
 

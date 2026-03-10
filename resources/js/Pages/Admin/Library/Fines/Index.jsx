@@ -1,3 +1,4 @@
+import React from 'react';
 import AdminLayout from '@/Layouts/Admin/AdminLayout';
 import { Head, router } from '@inertiajs/react';
 import TextInput from '@/Components/TextInput';

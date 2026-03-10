@@ -1,3 +1,4 @@
+import React from 'react';
 import AdminLayout from '@/Layouts/Admin/AdminLayout';
 import { Head, useForm, router } from '@inertiajs/react';
 import PrimaryButton from '@/Components/PrimaryButton';

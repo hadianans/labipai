@@ -210,10 +210,20 @@ class PublicController extends Controller
         $is_favorited = $user ? $user->bookFavorites()->where('book_id', $id)->exists() : false;
 
         // 2. Check Borrow Status for this User
-        // We need to know if THIS user has a pending request, or if the book is currently borrowed by this user.
+        // Search across ALL copies of the same book (same duplicate_code), not just this specific ID
         $my_active_request = null;
         if ($user) {
-            $my_active_request = \App\Models\BorrowRequest::where('book_id', $id)
+            // Get all copy IDs for this book title
+            $myCopy = \App\Models\BookCopy::where('book_id', $bookModel->id)->first();
+            $allCopyIds = [$bookModel->id]; // default: just this book
+            if ($myCopy) {
+                $allCopyIds = \App\Models\Book::join('book_copy', 'book.id', '=', 'book_copy.book_id')
+                    ->where('book_copy.duplicate_code', $myCopy->duplicate_code)
+                    ->pluck('book.id')
+                    ->toArray();
+            }
+
+            $my_active_request = \App\Models\BorrowRequest::whereIn('book_id', $allCopyIds)
                 ->where('user_id', $user->id)
                 ->whereIn('status', ['pending', 'approved'])
                 ->latest()

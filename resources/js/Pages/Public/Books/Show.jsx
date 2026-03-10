@@ -325,9 +325,9 @@ export default function BookShow({ book, reviews, auth }) {
 
                                     {/* BUTTON LOGIC - Uses selectedCopyId instead of book.id for Borrowing */}
                                     {book.my_request ? (
-                                        // User has a pending/approved request (globally for this book/title? Or specific copy? Logic check needed)
-                                        // Usually request is for a specific Book ID. 
-                                        book.my_request.book_id === selectedCopyId ? (
+                                        // User has a pending/approved request
+                                        // Use == for loose comparison (book_id is int, selectedCopyId is string)
+                                        String(book.my_request.book_id) === String(selectedCopyId) ? (
                                             book.my_request.status === 'pending' ? (
                                                 <button
                                                     onClick={() => handleCancelRequest(book.my_request.id)}
@@ -486,7 +486,7 @@ export default function BookShow({ book, reviews, auth }) {
                                             <div className="mb-4">
                                                 <label className="block text-sm font-medium text-gray-700">Review</label>
                                                 <textarea
-                                                    className="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                                                    className="w-full mt-1 p-2 border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500"
                                                     rows="3"
                                                     value={data.review}
                                                     onChange={(e) => setData('review', e.target.value)}
